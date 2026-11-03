@@ -1,0 +1,2379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraniteFlow — Quarry Block Scanner & Document Intelligence (20-Slide Deck)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-deep: #060B19;
+            --bg-navy: #0F172A;
+            --bg-card: rgba(19, 29, 51, 0.78);
+            --bg-card-solid: #131D33;
+            --bg-glass: rgba(255, 255, 255, 0.04);
+            --border-subtle: rgba(148, 163, 184, 0.16);
+            --border-cobalt: rgba(59, 130, 246, 0.42);
+            --cobalt-primary: #2563EB;
+            --cobalt-bright: #3B82F6;
+            --cobalt-glow: #60A5FA;
+            --emerald: #10B981;
+            --emerald-glow: #34D399;
+            --terracotta: #F97316;
+            --terracotta-soft: #FB923C;
+            --amber: #F59E0B;
+            --danger: #EF4444;
+            --purple: #8B5CF6;
+            --text-white: #F8FAFC;
+            --text-muted: #94A3B8;
+            --text-dim: #64748B;
+            --font-heading: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: var(--bg-deep);
+            color: var(--text-white);
+            font-family: var(--font-body);
+            -webkit-font-smoothing: antialiased;
+            user-select: none;
+        }
+
+        /* Animated Ambient Background */
+        .ambient-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 15% 18%, rgba(37, 99, 235, 0.16) 0%, transparent 42%),
+                radial-gradient(circle at 85% 82%, rgba(16, 185, 129, 0.11) 0%, transparent 42%),
+                radial-gradient(circle at 75% 15%, rgba(249, 115, 22, 0.09) 0%, transparent 36%),
+                linear-gradient(180deg, #050914 0%, #0B1224 50%, #060B19 100%);
+        }
+        .ambient-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.85) 30%, transparent 85%);
+        }
+
+        /* Top Progress & Header Chrome */
+        .progress-track {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: rgba(255,255,255,0.06);
+            z-index: 2000;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 5%;
+            background: linear-gradient(90deg, var(--cobalt-bright), var(--emerald), var(--terracotta));
+            box-shadow: 0 0 16px rgba(59, 130, 246, 0.8);
+            transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .top-bar {
+            position: fixed;
+            top: 14px;
+            left: 36px;
+            right: 36px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1500;
+            pointer-events: none;
+        }
+        .top-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid var(--border-subtle);
+            backdrop-filter: blur(12px);
+            padding: 6px 14px;
+            border-radius: 999px;
+            pointer-events: auto;
+        }
+        .top-brand img {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+        }
+        .top-brand span {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+            color: var(--text-white);
+        }
+        .top-brand .section-pill {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 9px;
+            border-radius: 99px;
+            background: rgba(59, 130, 246, 0.18);
+            color: var(--cobalt-glow);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            pointer-events: auto;
+        }
+        .chrome-btn {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .chrome-btn:hover {
+            color: #fff;
+            border-color: var(--cobalt-bright);
+            background: rgba(37, 99, 235, 0.2);
+        }
+
+        /* Slide Container & 3D Transitions */
+        .deck-viewport {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            z-index: 10;
+            perspective: 1600px;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            padding: 72px 56px 76px 56px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .slide-inner {
+            width: 100%;
+            max-width: 1480px;
+            height: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        /* Clean Static Elements (No Animations) */
+        .slide .anim-item {
+            opacity: 1;
+            transform: none;
+        }
+        .slide.active .anim-item {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Slide Header Pattern */
+        .slide-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 20px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+            padding-bottom: 12px;
+            flex-shrink: 0;
+        }
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            color: var(--cobalt-glow);
+            margin-bottom: 6px;
+        }
+        .eyebrow .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--cobalt-bright);
+            box-shadow: 0 0 10px var(--cobalt-bright);
+        }
+        .eyebrow.emerald { color: var(--emerald-glow); }
+        .eyebrow.emerald .dot { background: var(--emerald); box-shadow: 0 0 10px var(--emerald); }
+        .eyebrow.terracotta { color: var(--terracotta-soft); }
+        .eyebrow.terracotta .dot { background: var(--terracotta); box-shadow: 0 0 10px var(--terracotta); }
+        .eyebrow.amber { color: #FBBF24; }
+        .eyebrow.amber .dot { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+
+        h1.hero-title {
+            font-family: var(--font-heading);
+            font-size: clamp(36px, 4.2vw, 62px);
+            font-weight: 800;
+            line-height: 1.06;
+            letter-spacing: -1.2px;
+        }
+        h2.slide-title {
+            font-family: var(--font-heading);
+            font-size: clamp(24px, 2.4vw, 36px);
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.6px;
+            color: var(--text-white);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #FFFFFF 0%, #93C5FD 55%, #34D399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-warm {
+            background: linear-gradient(135deg, #FFF7ED 0%, #FB923C 55%, #34D399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .slide-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            max-width: 540px;
+            text-align: right;
+            line-height: 1.45;
+        }
+
+        /* Layout Grids */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            flex: 1;
+            min-height: 0;
+            align-items: stretch;
+        }
+        .grid-2-asym {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 24px;
+            flex: 1;
+            min-height: 0;
+            align-items: center;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        /* Glass Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 22px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-cobalt);
+            box-shadow: 0 20px 48px -12px rgba(37, 99, 235, 0.25);
+        }
+        .card-accent-top::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cobalt-bright), var(--emerald));
+        }
+        .card-accent-warm::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--terracotta), var(--amber));
+        }
+
+        /* Phone Mockup Frame */
+        .phone-stage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            height: 100%;
+            min-height: 0;
+            position: relative;
+        }
+        .phone-mockup {
+            position: relative;
+            height: min(64vh, 540px);
+            aspect-ratio: 9 / 19.5;
+            background: #050811;
+            border-radius: 34px;
+            padding: 8px;
+            border: 2px solid rgba(148, 163, 184, 0.35);
+            box-shadow:
+                0 25px 60px -15px rgba(0, 0, 0, 0.75),
+                0 0 32px rgba(37, 99, 235, 0.22),
+                inset 0 0 0 2px #020617;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+            flex-shrink: 0;
+        }
+        .phone-mockup:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow:
+                0 32px 70px -12px rgba(0, 0, 0, 0.85),
+                0 0 45px rgba(59, 130, 246, 0.42);
+        }
+        .phone-mockup img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 26px;
+            display: block;
+        }
+        .phone-badge {
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            background: #0F172A;
+            border: 1px solid var(--border-cobalt);
+            color: var(--text-white);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 999px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+        }
+
+        /* Document Frame for Quarry Slips */
+        .doc-frame {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 10px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.15);
+            height: min(58vh, 480px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .doc-frame img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        /* Badges, Pills, Metrics */
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+        .pill-blue { background: rgba(37, 99, 235, 0.2); color: #93C5FD; border: 1px solid rgba(59, 130, 246, 0.35); }
+        .pill-green { background: rgba(16, 185, 129, 0.2); color: #6EE7B7; border: 1px solid rgba(16, 185, 129, 0.35); }
+        .pill-amber { background: rgba(245, 158, 11, 0.2); color: #FCD34D; border: 1px solid rgba(245, 158, 11, 0.35); }
+        .pill-orange { background: rgba(249, 115, 22, 0.2); color: #FDBA74; border: 1px solid rgba(249, 115, 22, 0.35); }
+        .pill-red { background: rgba(239, 68, 68, 0.2); color: #FCA5A5; border: 1px solid rgba(239, 68, 68, 0.35); }
+
+        .kpi-value {
+            font-family: var(--font-heading);
+            font-size: clamp(28px, 3vw, 44px);
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+        .kpi-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* Feature List & Annotations */
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .feature-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            transition: all 0.2s ease;
+        }
+        .feature-row:hover {
+            background: rgba(37, 99, 235, 0.08);
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateX(4px);
+        }
+        .icon-box {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            background: rgba(37, 99, 235, 0.18);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            color: var(--cobalt-glow);
+        }
+        .icon-box.green { background: rgba(16, 185, 129, 0.18); border-color: rgba(16, 185, 129, 0.35); color: var(--emerald-glow); }
+        .icon-box.orange { background: rgba(249, 115, 22, 0.18); border-color: rgba(249, 115, 22, 0.35); color: var(--terracotta-soft); }
+        .icon-box.amber { background: rgba(245, 158, 11, 0.18); border-color: rgba(245, 158, 11, 0.35); color: #FCD34D; }
+
+        .feature-row h4 {
+            font-family: var(--font-heading);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-white);
+            margin-bottom: 3px;
+        }
+        .feature-row p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .data-table th {
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--cobalt-glow);
+            background: rgba(37, 99, 235, 0.12);
+            border-bottom: 1px solid var(--border-cobalt);
+        }
+        .data-table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            color: #E2E8F0;
+        }
+        .data-table tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .mono {
+            font-family: var(--font-mono);
+            font-size: 12px;
+        }
+
+        /* Code / Formula Block */
+        .code-block {
+            font-family: var(--font-mono);
+            font-size: 12.5px;
+            background: #050914;
+            border: 1px solid rgba(59, 130, 246, 0.28);
+            border-radius: 14px;
+            padding: 16px 18px;
+            color: #E2E8F0;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        .code-block .kw { color: #60A5FA; font-weight: 600; }
+        .code-block .fn { color: #34D399; }
+        .code-block .num { color: #FBBF24; }
+        .code-block .cm { color: #64748B; }
+
+        /* Swatch Bar */
+        .swatch-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+        }
+        .swatch {
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .swatch-color {
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .swatch-name { font-size: 11px; font-weight: 700; }
+        .swatch-hex { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
+
+        /* Pipeline Flow Steps */
+        .flow-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            position: relative;
+        }
+        .flow-step {
+            background: rgba(19, 29, 51, 0.85);
+            border: 1px solid var(--border-subtle);
+            border-radius: 18px;
+            padding: 18px;
+            position: relative;
+        }
+        .flow-step .step-num {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--cobalt-glow);
+            background: rgba(37, 99, 235, 0.18);
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid var(--border-subtle);
+            backdrop-filter: blur(16px);
+            padding: 8px 18px;
+            border-radius: 999px;
+            z-index: 1500;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+        }
+        .nav-arrow {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+        .nav-arrow:hover {
+            background: var(--cobalt-primary);
+            border-color: var(--cobalt-bright);
+            transform: scale(1.08);
+        }
+        .slide-dots {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .slide-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 99px;
+            background: rgba(148, 163, 184, 0.3);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .slide-dot.active {
+            width: 22px;
+            background: var(--cobalt-bright);
+            box-shadow: 0 0 10px var(--cobalt-bright);
+        }
+        .slide-counter {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-muted);
+            min-width: 54px;
+            text-align: center;
+        }
+
+        /* Slide Overview Drawer Modal */
+        .overview-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 11, 25, 0.94);
+            backdrop-filter: blur(20px);
+            z-index: 3000;
+            padding: 48px;
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+            overflow-y: auto;
+        }
+        .overview-modal.open { display: flex; }
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+        .overview-item {
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .overview-item:hover, .overview-item.current {
+            border-color: var(--cobalt-bright);
+            background: rgba(37, 99, 235, 0.16);
+            transform: translateY(-3px);
+        }
+        .overview-item .ov-num {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--cobalt-glow);
+            margin-bottom: 6px;
+        }
+        .overview-item .ov-title {
+            font-family: var(--font-heading);
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Static Badges & Shapes (No Animations) */
+        .pulse-badge { }
+        .float-anim { }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Background -->
+    <div class="ambient-bg">
+        <div class="ambient-grid"></div>
+    </div>
+
+    <!-- Top Progress Bar -->
+    <div class="progress-track">
+        <div class="progress-fill" id="progressBar"></div>
+    </div>
+
+    <!-- Top Chrome Bar -->
+    <header class="top-bar">
+        <div class="top-brand">
+            <img src="app/src/main/res/drawable-nodpi/logo_mark.png" alt="GraniteFlow Logo">
+            <span>GraniteFlow</span>
+            <span class="section-pill" id="sectionIndicator">01 · Executive Overview</span>
+        </div>
+        <div class="top-actions">
+            <button class="chrome-btn" onclick="toggleOverview()" title="Slide Grid (G)">
+                <span>⊞</span> <span>All 20 Slides (G)</span>
+            </button>
+            <button class="chrome-btn" onclick="toggleAutoPlay()" id="autoPlayBtn" title="Auto-Play (P)">
+                <span>▶</span> <span>Auto-Play</span>
+            </button>
+            <button class="chrome-btn" onclick="toggleFullscreen()" title="Fullscreen (F)">
+                <span>⛶</span> <span>Fullscreen</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 20-SLIDE DECK VIEWPORT -->
+    <main class="deck-viewport" id="deckViewport">
+
+        <!-- ================================================================
+             SLIDE 1: TITLE & HERO SHOWCASE
+             ================================================================ -->
+        <section class="slide active" data-section="01 · Executive Overview" data-title="GraniteFlow Hero Showcase">
+            <div class="slide-inner">
+                <div class="grid-2-asym">
+                    <div style="display:flex; flex-direction:column; gap:18px;">
+                        <div class="anim-item delay-1" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                            <span class="pill pill-blue pulse-badge">● ANDROID NATIVE + PYTHON ML PIPELINE</span>
+                            <span class="pill pill-green">v1.0 PRODUCTION APK</span>
+                            <span class="pill pill-orange">OFFLINE-FIRST QUARRY OS</span>
+                        </div>
+                        <h1 class="hero-title anim-item delay-2">
+                            <span class="gradient-text">GraniteFlow</span><br>
+                            Quarry Block Scanner &amp;<br>Document Intelligence
+                        </h1>
+                        <p class="anim-item delay-3" style="font-size:16px; color:var(--text-muted); line-height:1.6; max-width:640px;">
+                            An end-to-end industrial mobile platform &amp; supervised Machine Learning system that transforms raw granite quarry block marking, physical measurement slip OCR, CBM volume verification, and export documentation into a single zero-error workflow.
+                        </p>
+                        <div class="grid-4 anim-item delay-4" style="margin-top:6px;">
+                            <div class="card card-accent-top" style="padding:14px;">
+                                <div class="kpi-value" style="font-size:28px; color:var(--cobalt-glow);">231.7 <span style="font-size:15px;">m³</span></div>
+                                <div class="kpi-label">Daily Tracked Vol</div>
+                            </div>
+                            <div class="card card-accent-top" style="padding:14px;">
+                                <div class="kpi-value" style="font-size:28px; color:var(--emerald-glow);">±0.005</div>
+                                <div class="kpi-label">CBM Tolerance (m³)</div>
+                            </div>
+                            <div class="card card-accent-top" style="padding:14px;">
+                                <div class="kpi-value" style="font-size:28px; color:var(--terracotta-soft);">12 Col</div>
+                                <div class="kpi-label">ML Risk Schema</div>
+                            </div>
+                            <div class="card card-accent-top" style="padding:14px;">
+                                <div class="kpi-value" style="font-size:28px; color:#FCD34D;">3 Docs</div>
+                                <div class="kpi-label">Auto-PDF Suite</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phone-stage anim-item delay-3">
+                        <div class="phone-mockup float-anim" style="transform: rotate(-3deg);">
+                            <img src="screen_dashboard_blue.png" alt="GraniteFlow Dashboard Blue">
+                            <span class="phone-badge">Overview Dashboard · Cobalt</span>
+                        </div>
+                        <div class="phone-mockup float-anim" style="transform: rotate(3deg); animation-delay: 1.2s;">
+                            <img src="screen_workspace_blue2.png" alt="GraniteFlow Workspace Blue">
+                            <span class="phone-badge">Block Marking · NET Mode</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 2: THE PROBLEM IN GRANITE QUARRYING & EXPORT
+             ================================================================ -->
+        <section class="slide" data-section="01 · Executive Overview" data-title="Industry Pain Points">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow terracotta"><span class="dot"></span> THE INDUSTRIAL BOTTLENECK</div>
+                        <h2 class="slide-title">Why Traditional Quarry Block Inspection Breaks Down</h2>
+                    </div>
+                    <p class="slide-subtitle">Millions of dollars of dimensional granite blocks (Black Galaxy, Kattima Black, River White) are still measured on paper slips in dusty, offline quarry pits.</p>
+                </div>
+                <div class="grid-3 anim-item delay-2">
+                    <div class="card card-accent-warm">
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                                <div class="icon-box orange">📝</div>
+                                <span class="pill pill-red">HIGH ERROR RATE</span>
+                            </div>
+                            <h3 style="font-family:var(--font-heading); font-size:20px; margin-bottom:8px;">1. Handwritten &amp; Printed Quarry Slips</h3>
+                            <p style="font-size:13.5px; color:var(--text-muted); line-height:1.55;">
+                                Field inspectors record Gross Length, Height, Width, and Allowance (10–20 cm) on physical paper slips. Manual re-keying into spreadsheets causes transposition errors on block numbers and dimensions.
+                            </p>
+                        </div>
+                        <div style="padding-top:14px; border-top:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:12px; color:var(--text-muted);">Avg Manual Entry Time</span>
+                            <span class="mono" style="color:var(--terracotta-soft); font-weight:700;">18–25 mins / slip</span>
+                        </div>
+                    </div>
+                    <div class="card card-accent-warm">
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                                <div class="icon-box amber">📐</div>
+                                <span class="pill pill-amber">REVENUE LEAKAGE</span>
+                            </div>
+                            <h3 style="font-family:var(--font-heading); font-size:20px; margin-bottom:8px;">2. Gross-to-Net CBM Math Discrepancies</h3>
+                            <p style="font-size:13.5px; color:var(--text-muted); line-height:1.55;">
+                                Every granite block requires subtracting allowance from each axis before computing Net CBM: <code>(L_net × H_net × W_net) / 1,000,000</code>. Even a 2 cm misread shifts invoice value by ratusan USD per block.
+                            </p>
+                        </div>
+                        <div style="padding-top:14px; border-top:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:12px; color:var(--text-muted);">Unchecked Formula Drift</span>
+                            <span class="mono" style="color:#FCD34D; font-weight:700;">4.2% of field rows</span>
+                        </div>
+                    </div>
+                    <div class="card card-accent-warm">
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                                <div class="icon-box">🚢</div>
+                                <span class="pill pill-red">CUSTOMS DELAYS</span>
+                            </div>
+                            <h3 style="font-family:var(--font-heading); font-size:20px; margin-bottom:8px;">3. Export Document Mismatches</h3>
+                            <p style="font-size:13.5px; color:var(--text-muted); line-height:1.55;">
+                                When the Inspection Report, Packing List, and Commercial Invoice have mismatched Block Counts, Total CBM, Port of Discharge, or Consignee names, shipments get held at port customs.
+                            </p>
+                        </div>
+                        <div style="padding-top:14px; border-top:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:12px; color:var(--text-muted);">Connectivity at Quarry</span>
+                            <span class="mono" style="color:#FCA5A5; font-weight:700;">0% Cloud Uptime</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card anim-item delay-3" style="padding:16px 22px; flex-direction:row; align-items:center; justify-content:space-between; background:rgba(239,68,68,0.08); border-color:rgba(239,68,68,0.28);">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-size:20px;">⚡</span>
+                        <span style="font-size:14px; font-weight:600;">Core Challenge: Build an offline-capable mobile app + ML triage system that digitizes slips, validates physics &amp; CBM math, and generates audit-proof PDF export packages.</span>
+                    </div>
+                    <span class="pill pill-green">SOLVED BY GRANITEFLOW</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 3: INTRODUCING GRANITEFLOW (END-TO-END SOLUTION)
+             ================================================================ -->
+        <section class="slide" data-section="01 · Executive Overview" data-title="End-to-End Solution">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow emerald"><span class="dot"></span> UNIFIED PLATFORM ARCHITECTURE</div>
+                        <h2 class="slide-title">Four Pillars of the GraniteFlow Ecosystem</h2>
+                    </div>
+                    <p class="slide-subtitle">From quarry pit block marking to port-ready Commercial Invoices in under 60 seconds.</p>
+                </div>
+                <div class="flow-steps anim-item delay-2">
+                    <div class="flow-step card-accent-top">
+                        <span class="step-num">STAGE 01 · FIELD UI</span>
+                        <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:8px;">Tactile Block Marking</h3>
+                        <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
+                            Rapid 1-handed dimension entry with configurable allowance presets (<code>T1 15CM</code>, <code>T2 10CM</code>, <code>T3 20CM</code>), customer linking, and block photo capture.
+                        </p>
+                    </div>
+                    <div class="flow-step card-accent-top">
+                        <span class="step-num">STAGE 02 · ON-DEVICE OCR</span>
+                        <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:8px;">ML Kit Slip Scanner</h3>
+                        <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
+                            <code>MlKitOcrEngine</code> + 3-strategy <code>GraniteSlipParser</code> extract multi-row tables, columnar layouts, and single-block slips automatically.
+                        </p>
+                    </div>
+                    <div class="flow-step card-accent-top">
+                        <span class="step-num">STAGE 03 · ML RISK TRIAGE</span>
+                        <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:8px;">Extraction Risk Model</h3>
+                        <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
+                            12-feature scikit-learn classifier flags <code>NEEDS_REVIEW</code> vs <code>LOW_OBSERVED_RISK</code> with deterministic offline fallback and zero data leakage.
+                        </p>
+                    </div>
+                    <div class="flow-step card-accent-top">
+                        <span class="step-num">STAGE 04 · PDF SUITE</span>
+                        <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:8px;">Validated Export Docs</h3>
+                        <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
+                            <code>ConsistencyValidator</code> cross-checks Inspection, Packing List, and Invoice before rendering print-ready PDFs with 3D isometric diagrams.
+                        </p>
+                    </div>
+                </div>
+                <div class="grid-2 anim-item delay-3" style="align-items:center;">
+                    <div class="card" style="height:100%; justify-content:center; gap:14px;">
+                        <h4 style="font-family:var(--font-heading); font-size:17px; color:var(--cobalt-glow);">Key Engineering Invariants Built Into GraniteFlow</h4>
+                        <div class="feature-list">
+                            <div class="feature-row" style="padding:10px 14px;">
+                                <div class="icon-box green" style="width:32px; height:32px; font-size:15px;">✓</div>
+                                <div>
+                                    <h4 style="font-size:13.5px;">Human Approval Invariant</h4>
+                                    <p style="font-size:12px;">ML risk scoring is strictly advisory triage; OCR extractions never bypass human review in <code>OcrReviewDialog</code>.</p>
+                                </div>
+                            </div>
+                            <div class="feature-row" style="padding:10px 14px;">
+                                <div class="icon-box" style="width:32px; height:32px; font-size:15px;">⚡</div>
+                                <div>
+                                    <h4 style="font-size:13.5px;">Deterministic Offline Guarantee</h4>
+                                    <p style="font-size:12px;">When disconnected, <code>ExtractionRiskContract</code> automatically runs local physical &amp; CBM formula heuristics.</p>
+                                </div>
+                            </div>
+                            <div class="feature-row" style="padding:10px 14px;">
+                                <div class="icon-box orange" style="width:32px; height:32px; font-size:15px;">🔒</div>
+                                <div>
+                                    <h4 style="font-size:13.5px;">Zero-Leakage Golden Dataset</h4>
+                                    <p style="font-size:12px;">Pre-review predictions and post-review ground truth are versioned separately with <code>GroupKFold</code> by document ID.</p>
+                                </div>
+                            </div>
+                            <div class="feature-row" style="padding:10px 14px;">
+                                <div class="icon-box" style="width:32px; height:32px; font-size:15px; background:rgba(37,99,235,0.2); color:var(--cobalt-glow);">💾</div>
+                                <div>
+                                    <h4 style="font-size:13.5px;">ACID Local Storage Invariant</h4>
+                                    <p style="font-size:12px;"><code>LocalTransactionManager</code> coordinates Atomicity, Consistency invariants, and <code>commit()</code> Durability with continuous debounced auto-save.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="height:100%; flex-direction:row; align-items:center; justify-content:space-around; padding:18px;">
+                        <img src="app/src/main/res/drawable-nodpi/logo_mark.png" alt="Logo" style="width:88px; height:88px; border-radius:20px; box-shadow:0 12px 30px rgba(0,0,0,0.5);">
+                        <div style="max-width:340px;">
+                            <span class="pill pill-blue" style="margin-bottom:8px;">BUILT FOR FIELD INSPECTORS</span>
+                            <h3 style="font-family:var(--font-heading); font-size:20px; margin-bottom:6px;">14+ Granite Varieties Native</h3>
+                            <p style="font-size:12.5px; color:var(--text-muted); line-height:1.5;">
+                                Recognizes Black Galaxy, Kattima Black, Steel Grey, Tan Brown, Viscount White, Absolute Black, River White, Kashmir White, Imperial Red &amp; more out-of-the-box.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 4: DESIGN SYSTEM & DUAL-THEME UI/UX ARCHITECTURE
+             ================================================================ -->
+        <section class="slide" data-section="02 · UI/UX Design System" data-title="Dual-Theme UI/UX Design System">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow"><span class="dot"></span> ADAPTIVE INDUSTRIAL FINTECH UI/UX</div>
+                        <h2 class="slide-title">Dual-Theme Visual Identity: Electric Cobalt &amp; Warm Daylight</h2>
+                    </div>
+                    <p class="slide-subtitle">Engineered for both high-glare open-pit sunlight and low-light inspection cabins with a single tap on the top-right theme toggle.</p>
+                </div>
+                <div class="grid-2-asym anim-item delay-2">
+                    <div style="display:flex; flex-direction:column; gap:16px;">
+                        <div class="swatch-grid">
+                            <div class="swatch" style="background:rgba(15,23,42,0.9);">
+                                <div class="swatch-color" style="background:#0F172A;"></div>
+                                <div class="swatch-name">Primary Navy</div>
+                                <div class="swatch-hex">#0F172A</div>
+                            </div>
+                            <div class="swatch" style="background:rgba(15,23,42,0.9);">
+                                <div class="swatch-color" style="background:#2563EB;"></div>
+                                <div class="swatch-name">Brand Cobalt</div>
+                                <div class="swatch-hex">#2563EB</div>
+                            </div>
+                            <div class="swatch" style="background:rgba(15,23,42,0.9);">
+                                <div class="swatch-color" style="background:#10B981;"></div>
+                                <div class="swatch-name">Net Emerald</div>
+                                <div class="swatch-hex">#10B981</div>
+                            </div>
+                            <div class="swatch" style="background:rgba(15,23,42,0.9);">
+                                <div class="swatch-color" style="background:linear-gradient(135deg,#EE8456,#F4A574);"></div>
+                                <div class="swatch-name">Warm Granite</div>
+                                <div class="swatch-hex">#EE8456</div>
+                            </div>
+                            <div class="swatch" style="background:rgba(15,23,42,0.9);">
+                                <div class="swatch-color" style="background:#D97706;"></div>
+                                <div class="swatch-name">Review Amber</div>
+                                <div class="swatch-hex">#D97706</div>
+                            </div>
+                            <div class="swatch" style="background:rgba(15,23,42,0.9);">
+                                <div class="swatch-color" style="background:#F8F9FA;"></div>
+                                <div class="swatch-name">Day Surface</div>
+                                <div class="swatch-hex">#F8F9FA</div>
+                            </div>
+                        </div>
+                        <div class="grid-2" style="gap:14px;">
+                            <div class="card card-accent-top" style="padding:16px;">
+                                <span class="pill pill-blue" style="width:fit-content; margin-bottom:8px;">ELECTRIC COBALT (NIGHT / CABIN)</span>
+                                <h4 style="font-family:var(--font-heading); font-size:16px; margin-bottom:6px;">Deep Obsidian &amp; Cobalt Glow</h4>
+                                <p style="font-size:12.5px; color:var(--text-muted); line-height:1.5;">
+                                    Reduces eye strain during night container loading and indoor yard tallying. High-contrast <code>#3B82F6</code> CTAs and crisp <code>1dp</code> slate borders.
+                                </p>
+                            </div>
+                            <div class="card card-accent-warm" style="padding:16px;">
+                                <span class="pill pill-orange" style="width:fit-content; margin-bottom:8px;">WARM GRANITE (OUTDOOR SUNLIGHT)</span>
+                                <h4 style="font-family:var(--font-heading); font-size:16px; margin-bottom:6px;">Terracotta Cards &amp; Emerald CTAs</h4>
+                                <p style="font-size:12.5px; color:var(--text-muted); line-height:1.5;">
+                                    Ultra-high luminance contrast on crisp <code>#F8F9FA</code> background with warm mineral gradients and <code>#10B981</code> action pills for direct midday sun.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card" style="padding:14px 18px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:12.5px; font-weight:600; color:var(--cobalt-glow);">Real-Time Profile Reactivity &amp; Auto-Save</span>
+                                <span class="mono" style="font-size:12px; color:var(--emerald-glow);">Reactive Header Sync · ACID Persistence · Continuous Auto-Save Pill</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phone-stage">
+                        <div class="phone-mockup">
+                            <img src="screen_dashboard_blue.png" alt="Dark Cobalt Theme">
+                            <span class="phone-badge">Cobalt Dark Theme</span>
+                        </div>
+                        <div class="phone-mockup">
+                            <img src="screen_front.png" alt="Warm Daylight Theme">
+                            <span class="phone-badge">Warm Daylight Theme</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 5: LIVE COMMAND OVERVIEW DASHBOARD (UI DEEP DIVE)
+             ================================================================ -->
+        <section class="slide" data-section="02 · UI/UX Design System" data-title="Overview Dashboard Deep Dive">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow"><span class="dot"></span> SCREENSHOT WALKTHROUGH · 01</div>
+                        <h2 class="slide-title">Command Overview Dashboard: Real-Time Quarry Telemetry</h2>
+                    </div>
+                    <p class="slide-subtitle">Every metric a quarry supervisor needs before starting a marking session — surfaced in a zero-clutter single-screen hierarchy.</p>
+                </div>
+                <div class="grid-2-asym anim-item delay-2">
+                    <div class="feature-list">
+                        <div class="feature-row">
+                            <div class="icon-box">01</div>
+                            <div>
+                                <h4>Instant KPI Hero Cards (Today's Volume &amp; Block Units)</h4>
+                                <p>Displays live aggregated output (<strong>231.7 m³</strong> across <strong>45 units</strong>) with 3D isometric granite cube &amp; crate iconography for instant visual scanning.</p>
+                            </div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="icon-box green">02</div>
+                            <div>
+                                <h4>Customer Directory &amp; Active Export Partner Binding</h4>
+                                <p>One-tap access to saved export buyers (e.g., <strong>SHISHI YINSHIHUWANG IMPORT AND EXPORT LTD</strong>) with inline instant search (<code>Search Customers...</code>) and quick-add <code>+</code> modal.</p>
+                            </div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="icon-box orange">03</div>
+                            <div>
+                                <h4>Full-Width Primary Action Pill (<code>START MARKING +</code>)</h4>
+                                <p>Positioned right in the natural thumb zone for one-handed operation while holding chalk or measuring tape in the quarry yard.</p>
+                            </div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="icon-box amber">04</div>
+                            <div>
+                                <h4>7-Day Volume Trends Spark-Bar Chart</h4>
+                                <p>Visualizes daily cubic meter output over the last 7 days alongside bottom navigation for <strong>MARKING</strong>, <strong>HISTORY</strong>, and <strong>MY ACCOUNT</strong>.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phone-stage">
+                        <div class="phone-mockup">
+                            <img src="screen_dashboard_blue.png" alt="Overview Blue">
+                            <span class="phone-badge">screen_dashboard_blue.png</span>
+                        </div>
+                        <div class="phone-mockup">
+                            <img src="screen_front.png" alt="Overview Warm">
+                            <span class="phone-badge">screen_front.png</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 6: INTERACTIVE BLOCK MARKING WORKSPACE (UI DEEP DIVE)
+             ================================================================ -->
+        <section class="slide" data-section="02 · UI/UX Design System" data-title="Block Marking Workspace UI">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow emerald"><span class="dot"></span> SCREENSHOT WALKTHROUGH · 02</div>
+                        <h2 class="slide-title">Block Marking Workspace: High-Speed Dimension Entry</h2>
+                    </div>
+                    <p class="slide-subtitle">Designed so an inspector can record 50+ granite blocks consecutively without ever losing context or miscalculating Net CBM.</p>
+                </div>
+                <div class="grid-2-asym anim-item delay-2">
+                    <div class="phone-stage">
+                        <div class="phone-mockup">
+                            <img src="screen_workspace_blue2.png" alt="Workspace Blue">
+                            <span class="phone-badge">Cobalt Workspace (#302)</span>
+                        </div>
+                        <div class="phone-mockup">
+                            <img src="screen_workspace.png" alt="Workspace Warm">
+                            <span class="phone-badge">Daylight Workspace (#302)</span>
+                        </div>
+                    </div>
+                    <div class="feature-list">
+                        <div class="feature-row">
+                            <div class="icon-box">T1</div>
+                            <div>
+                                <h4>Horizontal Tiered Allowance Presets (<code>T1 15CM</code> · <code>T2 10CM</code> · <code>T3 20CM</code>)</h4>
+                                <p>Switch block quality/allowance tiers with a single tap at the top bar or add custom block type presets dynamically via the <code>+</code> pill.</p>
+                            </div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="icon-box green">#</div>
+                            <div>
+                                <h4>Watermark Hero Header (<code>T1 #302</code>) &amp; Live CBM Pill</h4>
+                                <p>Oversized <code>302</code> watermark prevents block-number confusion. Includes gallery picker &amp; <code>📷 TAKE PHOTO</code> to attach evidence or trigger OCR slip extraction.</p>
+                            </div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="icon-box orange">📏</div>
+                            <div>
+                                <h4>Dedicated Large-Numeral L / H / W Cards &amp; Remarks</h4>
+                                <p>Oversized right-aligned numeric inputs for <strong>LENGTH</strong>, <strong>HEIGHT</strong>, and <strong>WIDTH</strong> (in cm) with optional per-block defect/vein notes.</p>
+                            </div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="icon-box amber">∑</div>
+                            <div>
+                                <h4>Persistent Bottom Live Tally Bar</h4>
+                                <p>Continuously displays session totals: <strong>BLOCKS: 1</strong> | <strong>GROSS: 9.583 m³</strong> | <strong>NET: 8.269 m³</strong> | <strong>VALUE: 0 USD</strong> as you step through <code>&lt; PREV</code> and <code>NEXT BLOCK &gt;</code>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 7: HISTORY, RECENT MARKINGS & MULTI-QUARRY TRACKING
+             ================================================================ -->
+        <section class="slide" data-section="02 · UI/UX Design System" data-title="History & Multi-Quarry Tracking">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow"><span class="dot"></span> SCREENSHOT WALKTHROUGH · 03</div>
+                        <h2 class="slide-title">Recent Markings Feed, Weekly Analytics &amp; Fluid Transitions</h2>
+                    </div>
+                    <p class="slide-subtitle">Inspectors track multi-quarry batches across location codes (<code>XOW/XMN</code>, <code>ZMI/XMN</code>) and granite varieties with smooth slide animations.</p>
+                </div>
+                <div class="grid-2-asym anim-item delay-2">
+                    <div style="display:flex; flex-direction:column; gap:16px;">
+                        <div class="card card-accent-top">
+                            <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:10px;">Multi-Location Batch Cards (Captured in <code>screen_dashboard.png</code>)</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Quarry Code</th>
+                                        <th>Date</th>
+                                        <th>Material Variety</th>
+                                        <th>Net Volume</th>
+                                        <th>Block Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="mono" style="color:var(--cobalt-glow);">XOW/XMN</td>
+                                        <td class="mono">14.09.2026</td>
+                                        <td>KATTIMA BLACK</td>
+                                        <td class="mono" style="color:var(--emerald-glow); font-weight:700;">8.27 m³</td>
+                                        <td>1 blk</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="mono" style="color:var(--cobalt-glow);">XOW/XMN</td>
+                                        <td class="mono">12/10/2026</td>
+                                        <td>KATTIMA BLACK</td>
+                                        <td class="mono" style="color:var(--emerald-glow); font-weight:700;">132.30 m³</td>
+                                        <td>16 blks</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="mono" style="color:var(--cobalt-glow);">XOW/XMN</td>
+                                        <td class="mono">12/10/2026</td>
+                                        <td>KATTIMA BLACK</td>
+                                        <td class="mono" style="color:var(--text-muted);">0.00 m³</td>
+                                        <td>0 blks (Draft)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="mono" style="color:var(--cobalt-glow);">ZMI/XMN</td>
+                                        <td class="mono">12/10/2026</td>
+                                        <td>River White</td>
+                                        <td class="mono" style="color:var(--emerald-glow); font-weight:700;">41.35 m³</td>
+                                        <td>5 blks</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="grid-2" style="gap:14px;">
+                            <div class="card" style="padding:16px;">
+                                <span class="pill pill-green" style="width:fit-content; margin-bottom:6px;">WEEKLY HISTOGRAM</span>
+                                <h4 style="font-family:var(--font-heading); font-size:15px; margin-bottom:4px;">Wed → Mon Output Bars</h4>
+                                <p style="font-size:12.5px; color:var(--text-muted);">Highlights peak inspection days (Fri &amp; Sun spikes) with glowing emerald pill bars.</p>
+                            </div>
+                            <div class="card" style="padding:16px;">
+                                <span class="pill pill-blue" style="width:fit-content; margin-bottom:6px;">NATIVE XML ANIMATIONS</span>
+                                <h4 style="font-family:var(--font-heading); font-size:15px; margin-bottom:4px;">60fps Activity Transitions</h4>
+                                <p style="font-size:12.5px; color:var(--text-muted);">Captured mid-transition in <code>screen_dashboard.png</code> using custom <code>slide_in_right.xml</code> &amp; <code>slide_out_left.xml</code>.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phone-stage">
+                        <div class="phone-mockup" style="height:min(64vh, 540px);">
+                            <img src="screen_dashboard.png" alt="Recent Markings & Split Transition">
+                            <span class="phone-badge">Recent Markings &amp; Live Slide Transition</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 8: PHYSICAL QUARRY MEASUREMENT SLIPS (REAL-WORLD INPUT)
+             ================================================================ -->
+        <section class="slide" data-section="03 · OCR & Slip Intelligence" data-title="Physical Quarry Slips">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow terracotta"><span class="dot"></span> REAL-WORLD QUARRY DOCUMENTS</div>
+                        <h2 class="slide-title">Supporting Both Multi-Block Tabular &amp; Single-Block Isometric Slips</h2>
+                    </div>
+                    <p class="slide-subtitle">Bundled directly in <code>app/src/main/assets/</code> for instant field testing, regression verification, and live demo scanning.</p>
+                </div>
+                <div class="grid-2 anim-item delay-2">
+                    <div class="card" style="gap:14px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <span class="pill pill-blue">FORMAT A · MULTI-ROW TABULAR SLIP</span>
+                                <h3 style="font-family:var(--font-heading); font-size:18px; margin-top:6px;">Chettinad Granites &amp; Exports Ltd</h3>
+                            </div>
+                            <span class="mono" style="color:var(--emerald-glow); font-weight:700;">6 Blocks · 26.220 m³</span>
+                        </div>
+                        <div class="doc-frame" style="height:min(42vh, 340px);">
+                            <img src="app/src/main/assets/sample_quarry_slip.png" alt="Sample Quarry Slip">
+                        </div>
+                        <p style="font-size:12.5px; color:var(--text-muted);">
+                            <strong>Slip QMS-2026-8812:</strong> Material <code>BLACK GALAXY</code>, Location <code>ONG-QUARRY-04</code>, Inspector <code>K. RAMESH</code>, Blocks <code>BG-501</code> to <code>BG-506</code> with 10 cm allowance.
+                        </p>
+                    </div>
+                    <div class="card" style="gap:14px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <span class="pill pill-orange">FORMAT B · SINGLE-BLOCK ISOMETRIC SLIP</span>
+                                <h3 style="font-family:var(--font-heading); font-size:18px; margin-top:6px;">Block No: 301 Gross/Net Card</h3>
+                            </div>
+                            <span class="mono" style="color:var(--emerald-glow); font-weight:700;">Gross 9.583 → Net 8.269 m³</span>
+                        </div>
+                        <div class="doc-frame" style="height:min(42vh, 340px);">
+                            <img src="app/src/main/assets/real_photographed_slip.png" alt="Real Photographed Slip">
+                        </div>
+                        <p style="font-size:12.5px; color:var(--text-muted);">
+                            <strong>Block #301 Card:</strong> Gross <code>280 × 185 × 185 cm</code> (9.583 m³) minus <code>10 CM</code> allowance → Net <code>270 × 175 × 175 cm</code> (<strong>8.269 m³</strong>) with dual View A / View B wireframes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 9: GOOGLE ML KIT OCR & 3-STRATEGY GRANITESLIPPARSER
+             ================================================================ -->
+        <section class="slide" data-section="03 · OCR & Slip Intelligence" data-title="3-Strategy GraniteSlipParser">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow"><span class="dot"></span> ON-DEVICE DOCUMENT INTELLIGENCE</div>
+                        <h2 class="slide-title"><code>MlKitOcrEngine</code> + 3-Strategy <code>GraniteSlipParser</code></h2>
+                    </div>
+                    <p class="slide-subtitle">Why standard OCR fails on tabular quarry slips — and how GraniteFlow's cascaded 3-strategy parser achieves 100% structural recovery.</p>
+                </div>
+                <div class="grid-3 anim-item delay-2">
+                    <div class="card card-accent-top">
+                        <div>
+                            <span class="pill pill-blue" style="margin-bottom:10px;">STRATEGY A · ROW-BY-ROW</span>
+                            <h3 style="font-family:var(--font-heading); font-size:19px; margin-bottom:8px;">Horizontal Line Tokenizer</h3>
+                            <p style="font-size:13px; color:var(--text-muted); line-height:1.55;">
+                                When OCR preserves horizontal line order, Strategy A normalizes delimiters (<code>| , : x X</code>), detects block IDs matching <code>^[A-Za-z0-9\-_]{2,10}$</code>, and validates physical bounds (<code>L ∈ [40, 700] cm</code>, <code>H,W ∈ [40, 500] cm</code>).
+                            </p>
+                        </div>
+                        <div class="code-block" style="font-size:11px; padding:10px;">
+                            <span class="cm">// Row token stream</span><br>
+                            <span class="kw">BG-501</span> <span class="num">285 145 125 10</span> → <span class="fn">4.269 m³</span>
+                        </div>
+                    </div>
+                    <div class="card card-accent-top">
+                        <div>
+                            <span class="pill pill-green" style="margin-bottom:10px;">STRATEGY B · COLUMNAR RECONSTRUCTION</span>
+                            <h3 style="font-family:var(--font-heading); font-size:19px; margin-bottom:8px;">Vertical Column Zipper</h3>
+                            <p style="font-size:13px; color:var(--text-muted); line-height:1.55;">
+                                Mobile OCR often reads multi-column tables vertically (all Block IDs first, then a column of Lengths, then Heights, then Widths). Strategy B groups contiguous numeric runs matching <code>blockIds.size()</code> and zips them cleanly!
+                            </p>
+                        </div>
+                        <div class="code-block" style="font-size:11px; padding:10px;">
+                            <span class="cm">// Zips vertical columns of length N</span><br>
+                            <span class="kw">IDs[i]</span> + <span class="num">Lengths[i]</span> + <span class="num">Heights[i]</span> + <span class="num">Widths[i]</span>
+                        </div>
+                    </div>
+                    <div class="card card-accent-top">
+                        <div>
+                            <span class="pill pill-orange" style="margin-bottom:10px;">STRATEGY C · SINGLE-BLOCK CARD</span>
+                            <h3 style="font-family:var(--font-heading); font-size:19px; margin-bottom:8px;">Gross/Net Matrix Extractor</h3>
+                            <p style="font-size:13px; color:var(--text-muted); line-height:1.55;">
+                                Built for single-block summary cards (like <code>BLOCK NO : 301</code>). Extracts labeled Gross/Net dimensions, parses reported <code>NET CBM</code>, and invokes <code>validateReportedCbmConsistency()</code> automatically.
+                            </p>
+                        </div>
+                        <div class="code-block" style="font-size:11px; padding:10px;">
+                            <span class="kw">BLOCK 301</span>: <span class="num">280×185×185</span> (-10cm)<br>
+                            → Verified <span class="fn">8.269 m³</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card anim-item delay-3" style="padding:14px 20px; flex-direction:row; align-items:center; justify-content:space-between;">
+                    <div style="font-size:13px; color:var(--text-muted);">
+                        <strong style="color:#fff;">Header Metadata Auto-Extraction:</strong> Material Dictionary (14 granite types), Quarry Location Code (<code>ONG-QUARRY-04</code>, <code>XOW/XMN</code>), Inspection Date regex, Default Allowance (cm), &amp; Inspector Name.
+                    </div>
+                    <span class="pill pill-green">100% UNIT TESTED</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 10: PRECISION DIMENSIONCALCULATOR & CBM MATH ENGINE
+             ================================================================ -->
+        <section class="slide" data-section="03 · OCR & Slip Intelligence" data-title="DimensionCalculator & CBM Math">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow emerald"><span class="dot"></span> DETERMINISTIC DOMAIN MATH ENGINE</div>
+                        <h2 class="slide-title"><code>DimensionCalculator.java</code>: Zero-Floating-Point-Drift CBM Math</h2>
+                    </div>
+                    <p class="slide-subtitle">Uses <code>BigDecimal</code> with <code>RoundingMode.HALF_UP</code> at scale 3 and enforces a strict ±0.005 m³ tolerance against slip-reported volumes.</p>
+                </div>
+                <div class="grid-2 anim-item delay-2">
+                    <div class="card card-accent-top" style="justify-content:flex-start; gap:14px;">
+                        <h3 style="font-family:var(--font-heading); font-size:19px;">Core Mathematical Formulas &amp; Tolerance Gate</h3>
+                        <div class="code-block">
+<span class="cm">// 1. Net Dimension Deduction (per axis)</span>
+<span class="kw">Net_L</span> = max(<span class="num">0</span>, Gross_L - Allowance_cm)
+<span class="kw">Net_H</span> = max(<span class="num">0</span>, Gross_H - Allowance_cm)
+<span class="kw">Net_W</span> = max(<span class="num">0</span>, Gross_W - Allowance_cm)
+
+<span class="cm">// 2. Cubic Meter (CBM) Volume with BigDecimal HALF_UP</span>
+<span class="kw">rawCbm</span> = (Net_L * Net_H * Net_W) / <span class="num">1_000_000.0</span>;
+<span class="kw">netCbm</span> = BigDecimal.valueOf(rawCbm)
+                   .setScale(<span class="num">3</span>, RoundingMode.<span class="fn">HALF_UP</span>);
+
+<span class="cm">// 3. Slip Discrepancy Check (CBM_TOLERANCE = 0.005 m³)</span>
+<span class="kw">if</span> (Math.abs(reportedCbm - calcCbm) &gt; <span class="num">0.005</span>) {
+    flagWarning(<span class="fn">"MISMATCHED_CBM_FORMULA"</span>);
+}
+                        </div>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                            <span class="pill pill-green">BigDecimal Scale = 3</span>
+                            <span class="pill pill-blue">Tolerance = 0.005 m³</span>
+                            <span class="pill pill-orange">Physical Plausibility Guards</span>
+                        </div>
+                    </div>
+                    <div class="card" style="justify-content:space-between;">
+                        <div>
+                            <span class="pill pill-blue" style="margin-bottom:10px;">LIVE WORKED EXAMPLE · BLOCK #301</span>
+                            <h3 style="font-family:var(--font-heading); font-size:20px; margin-bottom:12px;">Gross vs. Net Volume Transformation</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Measurement</th>
+                                        <th>Length</th>
+                                        <th>Height</th>
+                                        <th>Width</th>
+                                        <th>Allowance</th>
+                                        <th>Volume (CBM)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>GROSS</strong></td>
+                                        <td class="mono">280 cm</td>
+                                        <td class="mono">185 cm</td>
+                                        <td class="mono">185 cm</td>
+                                        <td class="mono" style="color:var(--cobalt-glow);">—</td>
+                                        <td class="mono">9.583 m³</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:var(--emerald-glow);"><strong>ALLOWANCE</strong></td>
+                                        <td class="mono">-10 cm</td>
+                                        <td class="mono">-10 cm</td>
+                                        <td class="mono">-10 cm</td>
+                                        <td class="mono" style="color:var(--cobalt-glow);">10 CM</td>
+                                        <td class="mono" style="color:#FCA5A5;">-1.314 m³ (-13.7%)</td>
+                                    </tr>
+                                    <tr style="background:rgba(16,185,129,0.1);">
+                                        <td style="color:var(--emerald-glow);"><strong>NET BILLABLE</strong></td>
+                                        <td class="mono" style="color:var(--emerald-glow); font-weight:700;">270 cm</td>
+                                        <td class="mono" style="color:var(--emerald-glow); font-weight:700;">175 cm</td>
+                                        <td class="mono" style="color:var(--emerald-glow); font-weight:700;">175 cm</td>
+                                        <td class="mono" style="color:var(--emerald-glow);">APPLIED</td>
+                                        <td class="mono" style="color:var(--emerald-glow); font-weight:800; font-size:15px;">8.269 m³</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="background:rgba(37,99,235,0.1); border:1px solid var(--border-cobalt); border-radius:12px; padding:12px 14px; font-size:12.5px; color:#E2E8F0;">
+                            💡 <strong>Why 10 cm Allowance Matters:</strong> A single 10 cm dressing allowance reduces billable volume from <code>9.583 m³</code> to <code>8.269 m³</code>. GraniteFlow computes both Gross &amp; Net simultaneously so buyers and quarry owners have 100% transparency.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 11: CUSTOM 2D/3D ISOMETRIC BLOCKDIAGRAMVIEW UI
+             ================================================================ -->
+        <section class="slide" data-section="03 · OCR & Slip Intelligence" data-title="Custom Isometric BlockDiagramView">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow"><span class="dot"></span> CUSTOM ANDROID CANVAS VIEW</div>
+                        <h2 class="slide-title"><code>BlockDiagramView.java</code>: Dual-Perspective 3D Isometric Rendering</h2>
+                    </div>
+                    <p class="slide-subtitle">Renders dynamic <strong>VIEW A</strong> and <strong>VIEW B</strong> 3D block wireframes with live dimension callouts on both screen and exported PDFs.</p>
+                </div>
+                <div class="grid-2 anim-item delay-2" style="align-items:center;">
+                    <div class="card" style="align-items:center; justify-content:center; padding:28px; background: radial-gradient(circle at center, rgba(37,99,235,0.14), rgba(15,23,42,0.9));">
+                        <!-- Interactive SVG Isometric Block Rendering -->
+                        <svg viewBox="0 0 600 300" style="width:100%; max-height:310px;" class="float-anim">
+                            <!-- VIEW A -->
+                            <text x="145" y="28" fill="#60A5FA" font-family="Space Grotesk" font-size="13" font-weight="700" text-anchor="middle" letter-spacing="1.5">VIEW A (LEFT ISOMETRIC)</text>
+                            <!-- Back/Top Faces View A -->
+                            <polygon points="70,70 190,70 245,115 125,115" fill="rgba(59,130,246,0.15)" stroke="#60A5FA" stroke-width="2.2"/>
+                            <polygon points="70,70 125,115 125,225 70,180" fill="rgba(37,99,235,0.25)" stroke="#60A5FA" stroke-width="2.2"/>
+                            <rect x="125" y="115" width="120" height="110" fill="rgba(16,185,129,0.15)" stroke="#34D399" stroke-width="2.5"/>
+                            <!-- Dimension Labels View A -->
+                            <text x="55" y="105" fill="#F8FAFC" font-family="JetBrains Mono" font-size="12" font-weight="700" text-anchor="end">L 280 cm</text>
+                            <text x="255" y="175" fill="#34D399" font-family="JetBrains Mono" font-size="12" font-weight="700">H 185 cm</text>
+                            <text x="185" y="248" fill="#93C5FD" font-family="JetBrains Mono" font-size="12" font-weight="700" text-anchor="middle">W 185 cm</text>
+
+                            <!-- VIEW B -->
+                            <text x="455" y="28" fill="#34D399" font-family="Space Grotesk" font-size="13" font-weight="700" text-anchor="middle" letter-spacing="1.5">VIEW B (RIGHT ISOMETRIC)</text>
+                            <polygon points="415,70 535,70 480,115 360,115" fill="rgba(16,185,129,0.15)" stroke="#34D399" stroke-width="2.2"/>
+                            <polygon points="535,70 535,180 480,225 480,115" fill="rgba(37,99,235,0.25)" stroke="#60A5FA" stroke-width="2.2"/>
+                            <rect x="360" y="115" width="120" height="110" fill="rgba(59,130,246,0.15)" stroke="#60A5FA" stroke-width="2.5"/>
+                            <!-- Dimension Labels View B -->
+                            <text x="375" y="92" fill="#F8FAFC" font-family="JetBrains Mono" font-size="12" font-weight="700" text-anchor="end">L 280 cm</text>
+                            <text x="348" y="175" fill="#34D399" font-family="JetBrains Mono" font-size="12" font-weight="700" text-anchor="end">H 185 cm</text>
+                            <text x="420" y="248" fill="#93C5FD" font-family="JetBrains Mono" font-size="12" font-weight="700" text-anchor="middle">W 185 cm</text>
+                        </svg>
+                        <div style="display:flex; gap:12px; margin-top:8px;">
+                            <span class="pill pill-blue">Anti-Aliased Paint Canvas</span>
+                            <span class="pill pill-green">Shared Logic with PDF Renderer</span>
+                        </div>
+                    </div>
+                    <div class="feature-list">
+                        <div class="feature-row">
+                            <div class="icon-box">🧊</div>
+                            <div>
+                                <h4>Mirrored Isometric Projections (View A &amp; View B)</h4>
+                                <p>Matches standard export quarry inspection certificates by projecting both front-right and front-left 3D perspectives of each granite block.</p>
+                            </div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="icon-box green">📏</div>
+                            <div>
+                                <h4>Dynamic Dimension Callout Placement</h4>
+                                <p>Automatically binds live <code>L</code>, <code>H</code>, and <code>W</code> values onto the corresponding oblique depth, vertical height, and horizontal width edges.</p>
+                            </div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="icon-box orange">🖨️</div>
+                            <div>
+                                <h4>Vector-Crisp Reproduction in <code>InspectionReportPdfRenderer</code></h4>
+                                <p>The exact same geometric drawing primitives render inside the exported A4 Inspection Report PDF so digital previews match printed documents 1:1.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 12: SUPERVISED ML EXTRACTION RISK PIPELINE (ml/)
+             ================================================================ -->
+        <section class="slide" data-section="04 · ML Risk Intelligence" data-title="Supervised ML Extraction Risk Pipeline">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow emerald"><span class="dot"></span> PYTHON MACHINE LEARNING PIPELINE (ml/)</div>
+                        <h2 class="slide-title">Supervised Extraction-Risk Classification &amp; Quality Triage</h2>
+                    </div>
+                    <p class="slide-subtitle">Predicts whether an unreviewed OCR measurement row contains subtle extraction errors before a human inspector finalizes the document.</p>
+                </div>
+                <div class="grid-2 anim-item delay-2">
+                    <div class="card card-accent-top" style="gap:14px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span class="pill pill-blue">BINARY CLASSIFICATION FORMULATION</span>
+                            <span class="mono" style="color:var(--emerald-glow);">scikit-learn + joblib</span>
+                        </div>
+                        <div class="grid-2" style="gap:12px;">
+                            <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.35); border-radius:14px; padding:14px;">
+                                <div class="mono" style="font-size:11px; color:var(--emerald-glow); font-weight:700;">CLASS 0</div>
+                                <div style="font-family:var(--font-heading); font-size:16px; font-weight:700; margin:4px 0;">LOW_OBSERVED_RISK</div>
+                                <p style="font-size:12px; color:var(--text-muted);">High probability that OCR dimensions, allowance, and CBM match human-reviewed ground truth.</p>
+                            </div>
+                            <div style="background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.4); border-radius:14px; padding:14px;">
+                                <div class="mono" style="font-size:11px; color:#FCD34D; font-weight:700;">CLASS 1</div>
+                                <div style="font-family:var(--font-heading); font-size:16px; font-weight:700; margin:4px 0;">NEEDS_REVIEW</div>
+                                <p style="font-size:12px; color:var(--text-muted);">High likelihood of misread digits, missing block IDs, or CBM formula inconsistencies.</p>
+                            </div>
+                        </div>
+                        <div class="code-block" style="font-size:11.5px;">
+ml/<br>
+├── schema/<span class="fn">feature_schema.json</span>       <span class="cm"># 12-column contract v1.0.0</span><br>
+├── src/<span class="kw">feature_builder.py</span>           <span class="cm"># Pre-review feature extraction</span><br>
+├── src/<span class="kw">label_builder.py</span>             <span class="cm"># 1-to-1 ground truth alignment</span><br>
+├── src/<span class="kw">train_quality_model.py</span>       <span class="cm"># GroupKFold + sufficiency gates</span><br>
+├── src/<span class="kw">evaluate_quality_model.py</span>    <span class="cm"># ROC-AUC, F1 &amp; confusion matrix</span><br>
+├── src/<span class="kw">predict_quality.py</span>           <span class="cm"># Inference + reason codes</span><br>
+└── src/<span class="kw">model_registry.py</span>            <span class="cm"># Lineage &amp; schema compatibility</span>
+                        </div>
+                    </div>
+                    <div class="feature-list">
+                        <div class="feature-row">
+                            <div class="icon-box">🛡️</div>
+                            <div>
+                                <h4>Strict Data-Sufficiency Gates (Safe Stop Protection)</h4>
+                                <p>Requires <strong>≥ 200 total extracted rows</strong> and <strong>≥ 50 rows per class</strong> (<code>Class 0</code> &amp; <code>Class 1</code>). If insufficient data is present, training halts safely with <code>INSUFFICIENT_DATA</code> rather than deploying an unverified model.</p>
+                            </div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="icon-box green">🧬</div>
+                            <div>
+                                <h4>Grouped Holdout Validation (<code>GroupKFold</code> by <code>sourceDocumentId</code>)</h4>
+                                <p>All measurement rows from the same physical quarry slip are kept in the same fold so document-level layout characteristics never leak between train and test splits.</p>
+                            </div>
+                        </div>
+                        <div class="feature-row">
+                            <div class="icon-box orange">💡</div>
+                            <div>
+                                <h4>Explainable Reason Codes on Every Prediction</h4>
+                                <p><code>predict_quality.py</code> pairs probability scores with human-readable reason codes: <code>MISMATCHED_CBM_FORMULA</code>, <code>EXCESSIVE_ALLOWANCE</code>, <code>INVALID_DIMENSIONS</code>, <code>MISSING_BLOCK_NUMBER</code>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 13: 12 PRE-REVIEW FEATURES & ZERO-LEAKAGE INVARIANT
+             ================================================================ -->
+        <section class="slide" data-section="04 · ML Risk Intelligence" data-title="12 Pre-Review Feature Schema">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow"><span class="dot"></span> FEATURE ENGINEERING &amp; LEAKAGE PREVENTION</div>
+                        <h2 class="slide-title">The 12 Pre-Review Feature Schema (<code>feature_schema.json</code> v1.0.0)</h2>
+                    </div>
+                    <p class="slide-subtitle">Zero Leakage Invariant: Features are extracted strictly from raw OCR output prior to any human edits or ground-truth labels.</p>
+                </div>
+                <div class="card anim-item delay-2" style="padding:16px 20px;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Feature Name</th>
+                                <th>Type</th>
+                                <th>Extraction Formula / Domain Rule</th>
+                                <th>Risk Signal Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="mono">01</td>
+                                <td class="mono" style="color:var(--cobalt-glow);">document_type</td>
+                                <td><span class="pill pill-blue">Categorical</span></td>
+                                <td><code>QUARRY_MEASUREMENT_SLIP</code></td>
+                                <td>Contextualizes layout priors by document type</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">02</td>
+                                <td class="mono" style="color:var(--cobalt-glow);">ocr_engine</td>
+                                <td><span class="pill pill-blue">Categorical</span></td>
+                                <td><code>Google ML Kit</code></td>
+                                <td>Accounts for engine-specific tokenization behavior</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">03</td>
+                                <td class="mono" style="color:var(--cobalt-glow);">parser_version</td>
+                                <td><span class="pill pill-blue">Categorical</span></td>
+                                <td><code>v1.0.0</code></td>
+                                <td>Tracks parser rule lineage across releases</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">04</td>
+                                <td class="mono" style="color:var(--emerald-glow);">raw_text_length</td>
+                                <td><span class="pill pill-green">Numeric</span></td>
+                                <td><code>len(raw_ocr_row_text)</code></td>
+                                <td>Detects truncated or merged multi-line OCR noise</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">05</td>
+                                <td class="mono" style="color:var(--emerald-glow);">token_count</td>
+                                <td><span class="pill pill-green">Numeric</span></td>
+                                <td>Whitespace-split token count</td>
+                                <td>Flags missing columns or extra OCR artifacts</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">06</td>
+                                <td class="mono" style="color:var(--emerald-glow);">parsed_dimensions_count</td>
+                                <td><span class="pill pill-green">Numeric</span></td>
+                                <td>Count of <code>(L, H, W) &gt; 0</code></td>
+                                <td>Must equal 3 for a valid 3D granite block</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">07</td>
+                                <td class="mono" style="color:var(--emerald-glow);">allowance_value</td>
+                                <td><span class="pill pill-green">Numeric</span></td>
+                                <td>Deduction in cm (default <code>10.0</code>)</td>
+                                <td>Detects abnormal allowance values (&gt; 25 cm)</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">08</td>
+                                <td class="mono" style="color:var(--terracotta-soft);">has_block_number_pattern</td>
+                                <td><span class="pill pill-orange">Binary (0/1)</span></td>
+                                <td>Matches <code>^[A-Za-z0-9\-_]{2,10}$</code></td>
+                                <td>Identifies garbled or missing block identifiers</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">09</td>
+                                <td class="mono" style="color:var(--terracotta-soft);">is_cbm_formula_consistent</td>
+                                <td><span class="pill pill-orange">Binary (0/1)</span></td>
+                                <td><code>abs(reported - calc) &lt;= 0.005</code></td>
+                                <td>Primary mathematical self-consistency check</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">10</td>
+                                <td class="mono" style="color:var(--emerald-glow);">cbm_reported_vs_calc_diff</td>
+                                <td><span class="pill pill-green">Numeric</span></td>
+                                <td><code>abs(reported_cbm - calc_cbm)</code></td>
+                                <td>Quantifies magnitude of volume discrepancy</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">11</td>
+                                <td class="mono" style="color:var(--terracotta-soft);">has_zero_or_negative_dim</td>
+                                <td><span class="pill pill-orange">Binary (0/1)</span></td>
+                                <td><code>1</code> if any <code>dim &lt;= 0</code> else <code>0</code></td>
+                                <td>Catches unparsed or zeroed dimension fields</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">12</td>
+                                <td class="mono" style="color:var(--terracotta-soft);">has_excessive_allowance</td>
+                                <td><span class="pill pill-orange">Binary (0/1)</span></td>
+                                <td><code>1</code> if <code>allowance &gt;= any dim</code></td>
+                                <td>Prevents negative or zero net dimensions</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 14: ANDROID-ML SAFETY CONTRACT & OFFLINE FALLBACK
+             ================================================================ -->
+        <section class="slide" data-section="04 · ML Risk Intelligence" data-title="Android-ML Safety Contract">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow amber"><span class="dot"></span> FAIL-SAFE MOBILE AI INTEGRATION</div>
+                        <h2 class="slide-title"><code>ExtractionRiskContract.java</code> &amp; <code>OcrReviewDialog.java</code></h2>
+                    </div>
+                    <p class="slide-subtitle">How GraniteFlow bridges Android with Python ML inference while guaranteeing 100% safety when offline in remote quarries.</p>
+                </div>
+                <div class="grid-2 anim-item delay-2">
+                    <div class="card card-accent-top" style="gap:14px;">
+                        <h3 style="font-family:var(--font-heading); font-size:19px;">Resilient Dual-Mode Inference Contract</h3>
+                        <div class="code-block" style="font-size:11.5px;">
+<span class="kw">public enum</span> ServiceStatus { <span class="fn">CONNECTED</span>, <span class="fn">NOT_CONNECTED</span>, <span class="fn">ERROR</span> }
+<span class="kw">public enum</span> RiskCategory  { <span class="fn">LOW_OBSERVED_RISK</span>, <span class="fn">NEEDS_REVIEW</span> }
+
+<span class="cm">// Offline Fallback Evaluator (Zero Cloud Dependency)</span>
+<span class="kw">public static</span> RiskInferenceResponse <span class="fn">createOfflineFallbackResponse</span>(
+        RiskInferenceRequest request) {
+    <span class="cm">// Applies deterministic physical &amp; CBM formula rules</span>
+    <span class="cm">// Marks ServiceStatus.NOT_CONNECTED</span>
+    <span class="cm">// Always enforces overallNeedsReview = true</span>
+}
+                        </div>
+                        <div class="grid-2" style="gap:12px;">
+                            <div style="background:rgba(37,99,235,0.1); border:1px solid var(--border-cobalt); border-radius:12px; padding:12px;">
+                                <div style="font-size:12px; font-weight:700; color:var(--cobalt-glow);">When Online (<code>CONNECTED</code>)</div>
+                                <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Scores blocks via Retrofit <code>DocumentIntelligenceService</code> and returns model version + per-block probabilities.</p>
+                            </div>
+                            <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.35); border-radius:12px; padding:12px;">
+                                <div style="font-size:12px; font-weight:700; color:#FCD34D;">When Offline (<code>NOT_CONNECTED</code>)</div>
+                                <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Instant fallback to <code>offline-deterministic-fallback-v1.0</code> checking dimensions, allowance, and CBM math.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card card-accent-warm" style="gap:14px;">
+                        <span class="pill pill-amber" style="width:fit-content;">INTERACTIVE HUMAN-IN-THE-LOOP UI</span>
+                        <h3 style="font-family:var(--font-heading); font-size:19px;">Inside <code>OcrReviewDialog</code>: Human Approval Gate</h3>
+                        <div class="feature-list">
+                            <div class="feature-row" style="padding:11px 14px;">
+                                <div class="icon-box amber" style="width:32px; height:32px; font-size:14px;">1</div>
+                                <div>
+                                    <h4 style="font-size:13.5px;">Per-Block Risk Badges &amp; Reason Codes</h4>
+                                    <p style="font-size:12px;">Displays <code>NEEDS_REVIEW (90%)</code> or <code>LOW_OBSERVED_RISK (15%)</code> alongside exact diagnostic codes.</p>
+                                </div>
+                            </div>
+                            <div class="feature-row" style="padding:11px 14px;">
+                                <div class="icon-box" style="width:32px; height:32px; font-size:14px;">2</div>
+                                <div>
+                                    <h4 style="font-size:13.5px;">Inline Editable Measurement Rows</h4>
+                                    <p style="font-size:12px;">Inspectors can correct any OCR-parsed Block ID, Length, Height, Width, or Allowance before importing into the workspace.</p>
+                                </div>
+                            </div>
+                            <div class="feature-row" style="padding:11px 14px;">
+                                <div class="icon-box green" style="width:32px; height:32px; font-size:14px;">3</div>
+                                <div>
+                                    <h4 style="font-size:13.5px;">Automatic Golden Dataset Capture</h4>
+                                    <p style="font-size:12px;">Approving the dialog records both the raw <code>OcrPrediction</code> (pre-edit) and human-verified <code>GroundTruth</code> (post-edit) for continuous ML improvement.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 15: GOLDEN DATASET REPOSITORY & REGRESSION ENGINE
+             ================================================================ -->
+        <section class="slide" data-section="04 · ML Risk Intelligence" data-title="Golden Dataset & Regression Engine">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow"><span class="dot"></span> CONTINUOUS EVALUATION &amp; DATA FLYWHEEL</div>
+                        <h2 class="slide-title">On-Device Golden Dataset Inventory &amp; Regression Runner</h2>
+                    </div>
+                    <p class="slide-subtitle">Built-in dataset management (<code>DatasetInventoryActivity</code>) exports structured records directly to the Python ML training pipeline.</p>
+                </div>
+                <div class="grid-3 anim-item delay-2">
+                    <div class="card card-accent-top">
+                        <div>
+                            <span class="pill pill-blue" style="margin-bottom:10px;">1. IMMUTABLE RECORD TRIPLET</span>
+                            <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:8px;"><code>DatasetRepository.java</code></h3>
+                            <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
+                                Every scanned slip is persisted as an isolated directory under <code>ml/data/records/&lt;record_id&gt;/</code> containing three versioned JSON artifacts:
+                            </p>
+                        </div>
+                        <div class="code-block" style="font-size:11.5px;">
+records/&lt;record_id&gt;/<br>
+├── <span class="kw">prediction.json</span>      <span class="cm"># Raw OCR</span><br>
+├── <span class="fn">ground_truth_v1.json</span> <span class="cm"># Approved</span><br>
+└── <span class="num">manifest.json</span>        <span class="cm"># Lineage</span>
+                        </div>
+                    </div>
+                    <div class="card card-accent-top">
+                        <div>
+                            <span class="pill pill-green" style="margin-bottom:10px;">2. FIELD-LEVEL ACCURACY</span>
+                            <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:8px;"><code>DatasetEvaluationEngine.java</code></h3>
+                            <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
+                                Computes exact field-by-field accuracy comparing <code>OcrPrediction</code> against <code>GroundTruth</code> across Block Number, Length, Height, Width, Allowance, and Net CBM.
+                            </p>
+                        </div>
+                        <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:12px; font-size:12px;">
+                            <div style="color:var(--emerald-glow); font-weight:700;">Granular Error Attribution</div>
+                            <div style="color:var(--text-muted); margin-top:4px;">Pinpoints whether errors stem from OCR character recognition or table layout parsing.</div>
+                        </div>
+                    </div>
+                    <div class="card card-accent-top">
+                        <div>
+                            <span class="pill pill-orange" style="margin-bottom:10px;">3. CI/CD REGRESSION PROTECTION</span>
+                            <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:8px;"><code>DatasetRegressionRunner.java</code></h3>
+                            <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
+                                Re-runs the current <code>GraniteSlipParser</code> against all archived Golden Dataset records to ensure parser updates never degrade historical extraction accuracy.
+                            </p>
+                        </div>
+                        <div style="background:rgba(249,115,22,0.1); border:1px solid rgba(249,115,22,0.3); border-radius:12px; padding:12px; font-size:12px;">
+                            <div style="color:var(--terracotta-soft); font-weight:700;">Zero-Regression Guarantee</div>
+                            <div style="color:var(--text-muted); margin-top:4px;">Verified automatically in JUnit via <code>DatasetRegressionRunnerTest.java</code>.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 16: CROSS-DOCUMENT CONSISTENCYVALIDATOR ENGINE
+             ================================================================ -->
+        <section class="slide" data-section="05 · Export Docs & Architecture" data-title="Cross-Document ConsistencyValidator">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow emerald"><span class="dot"></span> EXPORT COMPLIANCE &amp; AUDIT ENGINE</div>
+                        <h2 class="slide-title"><code>ConsistencyValidator.java</code>: 3-Way Export Document Verification</h2>
+                    </div>
+                    <p class="slide-subtitle">Eliminates customs holds by automatically cross-checking the Inspection Report, Packing List, and Commercial Invoice before export.</p>
+                </div>
+                <div class="grid-2 anim-item delay-2" style="align-items:center;">
+                    <div class="card card-accent-top" style="gap:16px;">
+                        <h3 style="font-family:var(--font-heading); font-size:19px;">Automated Cross-Document Invariants</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Validation Rule</th>
+                                    <th>Document Pair</th>
+                                    <th>Tolerance / Match Criterion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Total Block Count</strong></td>
+                                    <td>Inspection ↔ Packing List</td>
+                                    <td><span class="pill pill-green">Exact Integer Match</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total Net CBM Volume</strong></td>
+                                    <td>Inspection ↔ Packing List</td>
+                                    <td><span class="pill pill-blue">|Δ CBM| ≤ 0.005 m³</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Billed vs Packed CBM</strong></td>
+                                    <td>Packing List ↔ Invoice</td>
+                                    <td><span class="pill pill-blue">|Δ CBM| ≤ 0.005 m³</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Port of Discharge</strong></td>
+                                    <td>Packing List ↔ Invoice</td>
+                                    <td><span class="pill pill-orange">Case-Insensitive String Match</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Consignee Company</strong></td>
+                                    <td>Packing List ↔ Invoice</td>
+                                    <td><span class="pill pill-orange">Case-Insensitive String Match</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="font-size:12.5px; color:var(--text-muted); background:rgba(255,255,255,0.03); padding:12px; border-radius:10px; border:1px solid var(--border-subtle);">
+                            🔍 <strong>Audit Trail:</strong> Every export check generates a <code>DocumentAuditRecord</code> + <code>ConsistencyResult</code> listing exact field-level discrepancies if any document falls out of sync.
+                        </div>
+                    </div>
+                    <div class="card" style="gap:16px; justify-content:center; align-items:center; text-align:center;">
+                        <div style="display:flex; align-items:center; justify-content:center; gap:14px; width:100%;">
+                            <div style="flex:1; background:rgba(37,99,235,0.14); border:1px solid var(--border-cobalt); padding:18px 12px; border-radius:16px;">
+                                <div style="font-size:26px; margin-bottom:6px;">📋</div>
+                                <div style="font-family:var(--font-heading); font-weight:700; font-size:14px;">Inspection Report</div>
+                                <div class="mono" style="font-size:11px; color:var(--cobalt-glow); margin-top:4px;">45 Blks · 231.700 m³</div>
+                            </div>
+                            <div style="font-size:20px; color:var(--emerald-glow);">⇄</div>
+                            <div style="flex:1; background:rgba(16,185,129,0.14); border:1px solid rgba(16,185,129,0.4); padding:18px 12px; border-radius:16px;">
+                                <div style="font-size:26px; margin-bottom:6px;">📦</div>
+                                <div style="font-family:var(--font-heading); font-weight:700; font-size:14px;">Packing List</div>
+                                <div class="mono" style="font-size:11px; color:var(--emerald-glow); margin-top:4px;">45 Blks · 231.700 m³</div>
+                            </div>
+                            <div style="font-size:20px; color:var(--emerald-glow);">⇄</div>
+                            <div style="flex:1; background:rgba(249,115,22,0.14); border:1px solid rgba(249,115,22,0.4); padding:18px 12px; border-radius:16px;">
+                                <div style="font-size:26px; margin-bottom:6px;">🧾</div>
+                                <div style="font-family:var(--font-heading); font-weight:700; font-size:14px;">Commercial Invoice</div>
+                                <div class="mono" style="font-size:11px; color:var(--terracotta-soft); margin-top:4px;">231.700 m³ · XIAMEN</div>
+                            </div>
+                        </div>
+                        <div style="background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.4); border-radius:999px; padding:8px 20px; color:var(--emerald-glow); font-weight:700; font-size:13px;">
+                            ✓ ALL 3 EXPORT DOCUMENTS VERIFIED CONSISTENT
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 17: AUTOMATED EXPORT DOCUMENT SUITE & PDF RENDERERS
+             ================================================================ -->
+        <section class="slide" data-section="05 · Export Docs & Architecture" data-title="Automated Export PDF Suite">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow"><span class="dot"></span> NATIVE ANDROID PDF DOCUMENT ENGINE</div>
+                        <h2 class="slide-title">One-Tap A4 Export Suite: Inspection, Packing List &amp; Commercial Invoice</h2>
+                    </div>
+                    <p class="slide-subtitle">Powered by <code>UnifiedExportDocumentsActivity</code>, <code>DocumentPreviewActivity</code>, and <code>PdfExportHelper</code> with FileProvider sharing.</p>
+                </div>
+                <div class="grid-3 anim-item delay-2">
+                    <div class="card card-accent-top">
+                        <div>
+                            <span class="pill pill-blue" style="margin-bottom:10px;">PDF RENDERER 01</span>
+                            <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:8px;"><code>InspectionReportPdfRenderer</code></h3>
+                            <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
+                                Generates per-block measurement certificates with Gross/Net tables, single-deduction allowance badges, <strong>View A &amp; View B 3D isometric diagrams</strong>, and inspector remarks.
+                            </p>
+                        </div>
+                        <div class="mono" style="font-size:11px; color:var(--cobalt-glow); padding-top:10px; border-top:1px solid var(--border-subtle);">
+                            Matches Reference Quarry Certificate Spec
+                        </div>
+                    </div>
+                    <div class="card card-accent-top">
+                        <div>
+                            <span class="pill pill-green" style="margin-bottom:10px;">PDF RENDERER 02</span>
+                            <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:8px;"><code>PackingListPdfRenderer</code></h3>
+                            <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
+                                Powered by <code>PackingListCalculator</code> &amp; <code>PackingListEditorActivity</code>. Lists every block's Gross L×H×W, Net L×H×W, Net CBM, metric ton weight estimation, and vessel/container metadata.
+                            </p>
+                        </div>
+                        <div class="mono" style="font-size:11px; color:var(--emerald-glow); padding-top:10px; border-top:1px solid var(--border-subtle);">
+                            Auto-Synced with Inspection Block List
+                        </div>
+                    </div>
+                    <div class="card card-accent-top">
+                        <div>
+                            <span class="pill pill-orange" style="margin-bottom:10px;">PDF RENDERER 03</span>
+                            <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:8px;"><code>InvoicePdfRenderer</code></h3>
+                            <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
+                                Powered by <code>InvoiceCalculator</code> &amp; <code>CurrencyWordsConverter</code> (converts USD totals into formal legal English words, e.g., <em>"SAY US DOLLARS FORTY FIVE THOUSAND ONLY"</em>) + authorized stamp.
+                            </p>
+                        </div>
+                        <div class="mono" style="font-size:11px; color:var(--terracotta-soft); padding-top:10px; border-top:1px solid var(--border-subtle);">
+                            Includes <code>ic_signature_stamp.png</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="card anim-item delay-3" style="padding:14px 20px; flex-direction:row; align-items:center; justify-content:space-between;">
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <img src="app/src/main/res/drawable/ic_signature_stamp.png" alt="Signature Stamp" style="height:46px; background:#fff; padding:4px 10px; border-radius:8px;">
+                        <div>
+                            <h4 style="font-family:var(--font-heading); font-size:15px;">Instant WhatsApp, Email &amp; Print Sharing via Android <code>FileProvider</code></h4>
+                            <p style="font-size:12.5px; color:var(--text-muted);">Inspectors preview generated pages on-device in <code>DocumentPreviewActivity</code> and share signed PDFs directly from the quarry site.</p>
+                        </div>
+                    </div>
+                    <span class="pill pill-blue">ZERO 3RD-PARTY PDF LICENSE COST</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 18: SYSTEM ARCHITECTURE & OFFLINE-FIRST ANDROID STACK
+             ================================================================ -->
+        <section class="slide" data-section="05 · Export Docs & Architecture" data-title="Full-Stack System Architecture">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow"><span class="dot"></span> CLEAN LAYERED SOFTWARE ARCHITECTURE</div>
+                        <h2 class="slide-title">Modular Android (Java) + Python ML Architecture</h2>
+                    </div>
+                    <p class="slide-subtitle">Decoupled UI, Domain Calculators, OCR/ML Contracts, and Offline-First Persistence layers.</p>
+                </div>
+                <div class="grid-4 anim-item delay-2" style="flex:1;">
+                    <div class="card card-accent-top" style="justify-content:flex-start; gap:12px;">
+                        <span class="pill pill-blue">LAYER 1 · PRESENTATION UI</span>
+                        <h4 style="font-family:var(--font-heading); font-size:16px;">Activities &amp; Fragments</h4>
+                        <ul style="font-size:12px; color:var(--text-muted); line-height:1.75; list-style:none;">
+                            <li>• <code>MainActivity</code> + BottomNav</li>
+                            <li>• <code>MarkingFragment</code> (Overview)</li>
+                            <li>• <code>HistoryFragment</code> &amp; <code>MyAccount</code></li>
+                            <li>• <code>InspectionWorkspaceActivity</code></li>
+                            <li>• <code>BlockDiagramView</code> (3D Canvas)</li>
+                            <li>• <code>OcrReviewDialog</code></li>
+                            <li>• <code>InvoiceEditorActivity</code></li>
+                            <li>• <code>PackingListEditorActivity</code></li>
+                            <li>• <code>UnifiedExportDocumentsActivity</code></li>
+                        </ul>
+                    </div>
+                    <div class="card card-accent-top" style="justify-content:flex-start; gap:12px;">
+                        <span class="pill pill-green">LAYER 2 · DOMAIN ENGINES</span>
+                        <h4 style="font-family:var(--font-heading); font-size:16px;">Calculators &amp; Validators</h4>
+                        <ul style="font-size:12px; color:var(--text-muted); line-height:1.75; list-style:none;">
+                            <li>• <code>DimensionCalculator</code></li>
+                            <li>• <code>InvoiceCalculator</code></li>
+                            <li>• <code>PackingListCalculator</code></li>
+                            <li>• <code>ConsistencyValidator</code></li>
+                            <li>• <code>CurrencyWordsConverter</code></li>
+                            <li>• <code>DatasetEvaluationEngine</code></li>
+                            <li>• <code>DatasetRegressionRunner</code></li>
+                            <li>• <code>InspectionReportPdfRenderer</code></li>
+                            <li>• <code>Invoice &amp; PackingList Renderers</code></li>
+                        </ul>
+                    </div>
+                    <div class="card card-accent-top" style="justify-content:flex-start; gap:12px;">
+                        <span class="pill pill-orange">LAYER 3 · OCR &amp; ML BRIDGE</span>
+                        <h4 style="font-family:var(--font-heading); font-size:16px;">Intelligence &amp; Contracts</h4>
+                        <ul style="font-size:12px; color:var(--text-muted); line-height:1.75; list-style:none;">
+                            <li>• <code>MlKitOcrEngine</code> (On-Device)</li>
+                            <li>• <code>GraniteSlipParser</code> (3-Strategy)</li>
+                            <li>• <code>ExtractionRiskContract</code></li>
+                            <li>• <code>DocumentIntelligenceService</code></li>
+                            <li>• <code>GraniteFlowApiService</code> (Retrofit)</li>
+                            <li>• Python <code>feature_builder.py</code></li>
+                            <li>• Python <code>train_quality_model.py</code></li>
+                            <li>• Python <code>predict_quality.py</code></li>
+                            <li>• Python <code>model_registry.py</code></li>
+                        </ul>
+                    </div>
+                    <div class="card card-accent-top" style="justify-content:flex-start; gap:12px;">
+                        <span class="pill pill-amber">LAYER 4 · ACID STORAGE &amp; PERSISTENCE</span>
+                        <h4 style="font-family:var(--font-heading); font-size:16px;">Local Storage &amp; Transactions</h4>
+                        <ul style="font-size:12px; color:var(--text-muted); line-height:1.75; list-style:none;">
+                            <li>• <code>LocalTransactionManager</code> (ACID Coordinator)</li>
+                            <li>• <code>GraniteRepository</code> (Unified Access)</li>
+                            <li>• <code>LocalDataManager</code> (<code>commit()</code> Durability)</li>
+                            <li>• <code>SessionManager</code> (Atomic User &amp; Registry)</li>
+                            <li>• <code>ReentrantLock</code> Isolation Mutex</li>
+                            <li>• Continuous Debounced Auto-Save Engine</li>
+                            <li>• State Snapshot &amp; Rollback Safety</li>
+                            <li>• Invariant Consistency Verification</li>
+                            <li>• <code>DatasetRepository</code> (Golden Records)</li>
+                            <li>• FileProvider Secure PDF Cache</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 19: PERFORMANCE METRICS, AUTOMATED TEST SUITE & IMPACT
+             ================================================================ -->
+        <section class="slide" data-section="06 · Validation & Roadmap" data-title="Metrics, Automated Tests & Impact">
+            <div class="slide-inner">
+                <div class="slide-header anim-item delay-1">
+                    <div>
+                        <div class="eyebrow emerald"><span class="dot"></span> VERIFIED QUALITY &amp; BENCHMARKS</div>
+                        <h2 class="slide-title">Engineering Rigor: 9 Automated Test Suites &amp; Productivity Gains</h2>
+                    </div>
+                    <p class="slide-subtitle">Every formula, OCR parser strategy, ACID transaction, cross-document rule, and ML pipeline stage is backed by deterministic tests.</p>
+                </div>
+                <div class="grid-2 anim-item delay-2">
+                    <div class="card" style="gap:12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <h3 style="font-family:var(--font-heading); font-size:18px;">Time Spent per 20-Block Quarry Inspection (Minutes)</h3>
+                            <span class="pill pill-green">-85% CYCLE TIME</span>
+                        </div>
+                        <div style="position:relative; height:220px; width:100%;">
+                            <canvas id="impactChart"></canvas>
+                        </div>
+                        <div class="grid-3" style="gap:10px; padding-top:6px;">
+                            <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; text-align:center;">
+                                <div class="mono" style="font-size:18px; font-weight:700; color:var(--emerald-glow);">85%</div>
+                                <div style="font-size:11px; color:var(--text-muted);">Faster Slip Digitization</div>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; text-align:center;">
+                                <div class="mono" style="font-size:18px; font-weight:700; color:var(--cobalt-glow);">100%</div>
+                                <div style="font-size:11px; color:var(--text-muted);">CBM Math Precision</div>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; text-align:center;">
+                                <div class="mono" style="font-size:18px; font-weight:700; color:var(--terracotta-soft);">0</div>
+                                <div style="font-size:11px; color:var(--text-muted);">Invoice/Packing Mismatches</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card card-accent-top" style="gap:10px;">
+                        <h3 style="font-family:var(--font-heading); font-size:18px;">Comprehensive JUnit 4 + Pytest Verification Matrix</h3>
+                        <table class="data-table" style="font-size:12px;">
+                            <thead>
+                                <tr>
+                                    <th>Test Suite File</th>
+                                    <th>Target Module</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="mono">GraniteSlipParserTest.java</td>
+                                    <td>Strategies A, B, C &amp; Header OCR</td>
+                                    <td><span class="pill pill-green">PASS</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="mono">DimensionCalculatorTest.java</td>
+                                    <td>Net Deduction, CBM &amp; ±0.005 Gate</td>
+                                    <td><span class="pill pill-green">PASS</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="mono">ConsistencyValidatorTest.java</td>
+                                    <td>3-Way Export Document Checks</td>
+                                    <td><span class="pill pill-green">PASS</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="mono">ExtractionRiskContractTest.java</td>
+                                    <td>Offline Fallback &amp; Safety Invariant</td>
+                                    <td><span class="pill pill-green">PASS</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="mono">LocalAcidTransactionTest.java</td>
+                                    <td>ACID Invariants, Rollback &amp; Durability</td>
+                                    <td><span class="pill pill-green">PASS</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="mono">InvoiceCalculatorTest.java</td>
+                                    <td>Line Totals, FOB/CIF &amp; Words</td>
+                                    <td><span class="pill pill-green">PASS</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="mono">PackingListCalculatorTest.java</td>
+                                    <td>Container Rows &amp; Net Weight</td>
+                                    <td><span class="pill pill-green">PASS</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="mono">DatasetEvaluationEngineTest.java</td>
+                                    <td>Golden Dataset &amp; Regression Runner</td>
+                                    <td><span class="pill pill-green">PASS</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="mono">ml/tests/test_ml_pipeline.py</td>
+                                    <td>12-Feature Schema, GroupKFold &amp; Gates</td>
+                                    <td><span class="pill pill-green">PASS</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SLIDE 20: FUTURE ROADMAP & CLOSING Q&A
+             ================================================================ -->
+        <section class="slide" data-section="06 · Validation & Roadmap" data-title="Roadmap & Closing Q&A">
+            <div class="slide-inner">
+                <div class="grid-2-asym">
+                    <div style="display:flex; flex-direction:column; gap:18px;">
+                        <div class="eyebrow emerald anim-item delay-1"><span class="dot"></span> THE ROAD AHEAD · GRANITEFLOW 2.0</div>
+                        <h1 class="hero-title anim-item delay-2" style="font-size:clamp(32px, 3.6vw, 52px);">
+                            Digitizing Every Quarry.<br>
+                            <span class="gradient-text">Zero Measurement Drift.</span>
+                        </h1>
+                        <div class="grid-3 anim-item delay-3" style="gap:14px;">
+                            <div class="card card-accent-top" style="padding:16px;">
+                                <span class="pill pill-blue" style="width:fit-content; margin-bottom:8px;">PHASE 1 · Q4 2026</span>
+                                <h4 style="font-family:var(--font-heading); font-size:15px; margin-bottom:6px;">ARCore Depth &amp; LiDAR</h4>
+                                <p style="font-size:12px; color:var(--text-muted);">Auto-measure block L × H × W directly from phone camera point-cloud bounding boxes.</p>
+                            </div>
+                            <div class="card card-accent-top" style="padding:16px;">
+                                <span class="pill pill-green" style="width:fit-content; margin-bottom:8px;">PHASE 2 · Q1 2027</span>
+                                <h4 style="font-family:var(--font-heading); font-size:15px; margin-bottom:6px;">On-Device TFLite Risk</h4>
+                                <p style="font-size:12px; color:var(--text-muted);">Compile trained scikit-learn risk models to TensorFlow Lite / ONNX for 100% local neural inference.</p>
+                            </div>
+                            <div class="card card-accent-warm" style="padding:16px;">
+                                <span class="pill pill-orange" style="width:fit-content; margin-bottom:8px;">PHASE 3 · Q2 2027</span>
+                                <h4 style="font-family:var(--font-heading); font-size:15px; margin-bottom:6px;">ERP &amp; Customs EDI Sync</h4>
+                                <p style="font-size:12px; color:var(--text-muted);">One-click webhook export to SAP, Tally Prime, and ICEGATE maritime port manifests.</p>
+                            </div>
+                        </div>
+                        <div class="card anim-item delay-4" style="padding:16px 22px; flex-direction:row; align-items:center; justify-content:space-between; background:linear-gradient(135deg, rgba(37,99,235,0.22), rgba(16,185,129,0.16)); border-color:var(--border-cobalt);">
+                            <div style="display:flex; align-items:center; gap:14px;">
+                                <img src="app/src/main/res/drawable-nodpi/logo_mark.png" alt="Logo" style="width:44px; height:44px; border-radius:10px;">
+                                <div>
+                                    <div style="font-family:var(--font-heading); font-size:17px; font-weight:700;">Ready for Live Demo &amp; Q&amp;A</div>
+                                    <div class="mono" style="font-size:12px; color:var(--cobalt-glow);">APK: GraniteFlow-QuarryBlockScanner-Blue.apk (53.9 MB)</div>
+                                </div>
+                            </div>
+                            <button class="chrome-btn" onclick="goToSlide(0)" style="background:var(--cobalt-primary); color:#fff; border-color:var(--cobalt-glow); padding:10px 18px; font-weight:700;">
+                                ↺ Replay Presentation
+                            </button>
+                        </div>
+                    </div>
+                    <div class="phone-stage anim-item delay-3">
+                        <div class="phone-mockup float-anim" style="transform: rotate(-4deg) scale(0.95);">
+                            <img src="screen_front.png" alt="Warm Overview">
+                            <span class="phone-badge">Daylight Overview</span>
+                        </div>
+                        <div class="phone-mockup float-anim" style="z-index:2; animation-delay:0.8s;">
+                            <img src="screen_dashboard_blue.png" alt="Cobalt Overview">
+                            <span class="phone-badge">Cobalt Overview</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation Controls -->
+    <nav class="bottom-nav">
+        <button class="nav-arrow" onclick="prevSlide()" title="Previous Slide (←)">←</button>
+        <div class="slide-dots" id="slideDots"></div>
+        <div class="slide-counter"><span id="curSlideNum">01</span> / <span id="totSlideNum">20</span></div>
+        <button class="nav-arrow" onclick="nextSlide()" title="Next Slide (→ or Space)">→</button>
+    </nav>
+
+    <!-- 20-Slide Overview Grid Modal -->
+    <div class="overview-modal" id="overviewModal">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <div class="eyebrow"><span class="dot"></span> QUICK JUMP NAVIGATOR</div>
+                <h2 class="slide-title">All 20 Slides — GraniteFlow Presentation</h2>
+            </div>
+            <button class="chrome-btn" onclick="toggleOverview()" style="padding:8px 16px; font-size:14px;">✕ Close (Esc)</button>
+        </div>
+        <div class="overview-grid" id="overviewGrid"></div>
+    </div>
+
+    <script>
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const totalSlides = slides.length;
+        let currentIndex = 0;
+        let autoPlayTimer = null;
+        let chartInitialized = false;
+
+        document.getElementById('totSlideNum').textContent = String(totalSlides).padStart(2, '0');
+
+        // Build dots & overview grid
+        const dotsContainer = document.getElementById('slideDots');
+        const overviewGrid = document.getElementById('overviewGrid');
+
+        slides.forEach((slide, idx) => {
+            const dot = document.createElement('div');
+            dot.className = 'slide-dot' + (idx === 0 ? ' active' : '');
+            dot.title = `Slide ${idx + 1}: ${slide.dataset.title || ''}`;
+            dot.onclick = () => goToSlide(idx);
+            dotsContainer.appendChild(dot);
+
+            const ov = document.createElement('div');
+            ov.className = 'overview-item' + (idx === 0 ? ' current' : '');
+            ov.innerHTML = `
+                <div class="ov-num">SLIDE ${String(idx + 1).padStart(2, '0')} · ${slide.dataset.section.split('·')[1] || ''}</div>
+                <div class="ov-title">${slide.dataset.title || 'Slide ' + (idx + 1)}</div>
+            `;
+            ov.onclick = () => {
+                goToSlide(idx);
+                toggleOverview(false);
+            };
+            overviewGrid.appendChild(ov);
+        });
+
+        function goToSlide(index) {
+            if (index < 0) index = 0;
+            if (index >= totalSlides) index = totalSlides - 1;
+            currentIndex = index;
+
+            slides.forEach((s, i) => {
+                s.classList.remove('active', 'prev-slide');
+                if (i === currentIndex) {
+                    s.classList.add('active');
+                } else if (i < currentIndex) {
+                    s.classList.add('prev-slide');
+                }
+            });
+
+            // Update dots & counter
+            document.querySelectorAll('.slide-dot').forEach((d, i) => {
+                d.classList.toggle('active', i === currentIndex);
+            });
+            document.querySelectorAll('.overview-item').forEach((o, i) => {
+                o.classList.toggle('current', i === currentIndex);
+            });
+
+            document.getElementById('curSlideNum').textContent = String(currentIndex + 1).padStart(2, '0');
+            document.getElementById('progressBar').style.width = (((currentIndex + 1) / totalSlides) * 100) + '%';
+            document.getElementById('sectionIndicator').textContent = slides[currentIndex].dataset.section;
+
+            // Initialize Chart.js on Slide 19 when visited
+            if (currentIndex === 18 && !chartInitialized) {
+                initImpactChart();
+                chartInitialized = true;
+            }
+        }
+
+        function nextSlide() {
+            if (currentIndex < totalSlides - 1) goToSlide(currentIndex + 1);
+            else if (autoPlayTimer) goToSlide(0);
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) goToSlide(currentIndex - 1);
+        }
+
+        function toggleOverview(forceState) {
+            const modal = document.getElementById('overviewModal');
+            const nextState = typeof forceState === 'boolean' ? forceState : !modal.classList.contains('open');
+            modal.classList.toggle('open', nextState);
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen().catch(() => {});
+            }
+        }
+
+        function toggleAutoPlay() {
+            const btn = document.getElementById('autoPlayBtn');
+            if (autoPlayTimer) {
+                clearInterval(autoPlayTimer);
+                autoPlayTimer = null;
+                btn.innerHTML = '<span>▶</span> <span>Auto-Play</span>';
+            } else {
+                autoPlayTimer = setInterval(nextSlide, 5500);
+                btn.innerHTML = '<span>⏸</span> <span>Playing...</span>';
+            }
+        }
+
+        function initImpactChart() {
+            const ctx = document.getElementById('impactChart');
+            if (!ctx || typeof Chart === 'undefined') return;
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Slip Data Entry', 'CBM Calculation', 'Cross-Doc Audit', 'PDF Generation', 'Total Workflow'],
+                    datasets: [
+                        {
+                            label: 'Manual Paper & Excel (mins)',
+                            data: [22, 12, 15, 18, 67],
+                            backgroundColor: 'rgba(249, 115, 22, 0.75)',
+                            borderColor: '#F97316',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'GraniteFlow App + OCR (mins)',
+                            data: [3, 0.5, 0.5, 1, 5],
+                            backgroundColor: 'rgba(16, 185, 129, 0.85)',
+                            borderColor: '#10B981',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#CBD5E1', font: { family: 'Inter', size: 12 } }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(148,163,184,0.08)' },
+                            ticks: { color: '#94A3B8', font: { family: 'Inter', size: 11 } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(148,163,184,0.08)' },
+                            ticks: { color: '#94A3B8', font: { family: 'JetBrains Mono', size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'g' || e.key === 'G') {
+                toggleOverview();
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            } else if (e.key === 'p' || e.key === 'P') {
+                toggleAutoPlay();
+            } else if (e.key === 'Escape') {
+                toggleOverview(false);
+            }
+        });
+    </script>
+</body>
+</html>

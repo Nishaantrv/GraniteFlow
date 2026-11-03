@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">GraniteFlow</string>
+    <string name="nav_marking">MARKING</string>
+    <string name="nav_history">HISTORY</string>
+    <string name="nav_my_account">MY ACCOUNT</string>
+    <string name="title_dashboard">GraniteFlow Workspace</string>
+    <string name="action_new_inspection">New Inspection</string>
+    <string name="action_import_ocr">Import / OCR Document</string>
+    <string name="action_create_invoice">Create Invoice</string>
+    <string name="action_create_packing_list">Create Packing List</string>
+    <string name="action_generate_report">Generate Inspection Report</string>
+    <string name="measurement_gross">GROSS</string>
+    <string name="measurement_net">NET</string>
+    <string name="label_allowance">ALLOWANCE</string>
+    <string name="label_net_cbm">NET CBM</string>
+    <string name="view_a">VIEW A</string>
+    <string name="view_b">VIEW B</string>
+    <string name="remarks">REMARKS</string>
+</resources>

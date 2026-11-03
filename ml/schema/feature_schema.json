@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GraniteFlowExtractionRiskFeatureSchema",
+  "version": "1.0.0",
+  "description": "Pre-review feature schema for predicting row extraction risk without ground truth leakage.",
+  "type": "object",
+  "properties": {
+    "document_type": {
+      "type": "string",
+      "enum": ["QUARRY_MEASUREMENT_SLIP", "INSPECTION_SHEET", "BLOCK_TALLY", "UNKNOWN"]
+    },
+    "ocr_engine": {
+      "type": "string",
+      "enum": ["Google ML Kit", "Azure Document Intelligence", "Google Document AI", "UNKNOWN"]
+    },
+    "parser_version": {
+      "type": "string",
+      "enum": ["v1.0.0", "v1.1.0", "UNKNOWN"]
+    },
+    "raw_text_length": {
+      "type": "number",
+      "description": "Character length of the predicted row OCR text snippet."
+    },
+    "token_count": {
+      "type": "integer",
+      "description": "Number of whitespace-separated tokens in the raw row."
+    },
+    "parsed_dimensions_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3,
+      "description": "Number of dimension axes successfully extracted (0 to 3)."
+    },
+    "allowance_value": {
+      "type": "number",
+      "description": "Allowance deduction in centimetres."
+    },
+    "has_block_number_pattern": {
+      "type": "integer",
+      "enum": [0, 1],
+      "description": "1 if block number follows alphanumeric quarry pattern, 0 otherwise."
+    },
+    "is_cbm_formula_consistent": {
+      "type": "integer",
+      "enum": [0, 1],
+      "description": "1 if reported CBM equals calculated volume within 0.005 tolerance."
+    },
+    "cbm_reported_vs_calc_diff": {
+      "type": "number",
+      "description": "Absolute difference between extracted CBM and calculated CBM."
+    },
+    "has_zero_or_negative_dim": {
+      "type": "integer",
+      "enum": [0, 1],
+      "description": "1 if any gross dimension is <= 0."
+    },
+    "has_excessive_allowance": {
+      "type": "integer",
+      "enum": [0, 1],
+      "description": "1 if allowance is >= any gross dimension."
+    }
+  },
+  "required": [
+    "document_type",
+    "ocr_engine",
+    "parser_version",
+    "raw_text_length",
+    "token_count",
+    "parsed_dimensions_count",
+    "allowance_value",
+    "has_block_number_pattern",
+    "is_cbm_formula_consistent",
+    "cbm_reported_vs_calc_diff",
+    "has_zero_or_negative_dim",
+    "has_excessive_allowance"
+  ],
+  "target": {
+    "name": "needs_review",
+    "type": "integer",
+    "enum": [0, 1],
+    "description": "1: NEEDS_REVIEW (requires human correction), 0: LOW_OBSERVED_RISK (clean approved match)"
+  }
+}

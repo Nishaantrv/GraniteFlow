@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="22dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="28dp">
+
+        <!-- Top Bar: Theme Toggle on Right -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/btnToggleTheme"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/shape_circular_button"
+                android:contentDescription="Toggle Theme"
+                android:src="@drawable/ic_theme_mode" />
+        </RelativeLayout>
+
+        <!-- Centered Minimal Header -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/logoContainer"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/brand_logo_bg"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="App Logo"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/logo_mark" />
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/tvAppTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="GraniteFlow"
+            android:textColor="@color/text_primary"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/tvAppSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:fontFamily="sans-serif"
+            android:text="Sign in to continue"
+            android:textColor="@color/text_secondary"
+            android:textSize="12.5sp" />
+
+        <!-- Segmented Tab Toggle: Sign In vs Sign Up -->
+        <LinearLayout
+            android:id="@+id/tabSegmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="22dp"
+            android:background="@drawable/shape_pill_button_secondary"
+            android:orientation="horizontal"
+            android:padding="3dp">
+
+            <TextView
+                android:id="@+id/tabSignIn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/shape_tab_pill_active"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:text="Sign In"
+                android:textColor="@color/text_on_pill"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/tabSignUp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/shape_tab_pill_inactive"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:text="Sign Up"
+                android:textColor="@color/text_secondary"
+                android:textSize="12.5sp" />
+        </LinearLayout>
+
+        <!-- Clean Auth Card -->
+        <LinearLayout
+            android:id="@+id/formCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:animateLayoutChanges="true"
+            android:background="@drawable/shape_card_modern"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <!-- Display Name (Sign Up only) -->
+            <LinearLayout
+                android:id="@+id/layoutName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.04"
+                    android:text="DISPLAY NAME"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="10sp" />
+
+                <EditText
+                    android:id="@+id/etName"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/shape_input_rounded"
+                    android:fontFamily="sans-serif"
+                    android:hint="Full Name"
+                    android:inputType="textPersonName"
+                    android:paddingHorizontal="14dp"
+                    android:singleLine="true"
+                    android:textColor="@color/input_text"
+                    android:textColorHint="@color/input_hint"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Company Name (Sign Up only) -->
+            <LinearLayout
+                android:id="@+id/layoutCompany"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.04"
+                    android:text="COMPANY NAME (OPTIONAL)"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="10sp" />
+
+                <EditText
+                    android:id="@+id/etCompany"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/shape_input_rounded"
+                    android:fontFamily="sans-serif"
+                    android:hint="Company Name (Optional)"
+                    android:inputType="textCapWords"
+                    android:paddingHorizontal="14dp"
+                    android:singleLine="true"
+                    android:textColor="@color/input_text"
+                    android:textColorHint="@color/input_hint"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Email -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.04"
+                android:text="EMAIL"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp" />
+
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/shape_input_rounded"
+                android:fontFamily="sans-serif"
+                android:hint="Email Address"
+                android:inputType="textEmailAddress"
+                android:paddingHorizontal="14dp"
+                android:singleLine="true"
+                android:textColor="@color/input_text"
+                android:textColorHint="@color/input_hint"
+                android:textSize="13sp" />
+
+            <!-- Password -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.04"
+                android:text="PASSWORD"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/shape_input_rounded">
+
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toStartOf="@id/btnTogglePasswordVisibility"
+                    android:background="@null"
+                    android:fontFamily="sans-serif"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="8dp"
+                    android:singleLine="true"
+                    android:textColor="@color/input_text"
+                    android:textColorHint="@color/input_hint"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/btnTogglePasswordVisibility"
+                    android:layout_width="42dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:text="SHOW"
+                    android:textColor="@color/brand_blue"
+                    android:textSize="9.5sp" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tvPasswordHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Minimum 6 characters"
+                android:textColor="@color/text_tertiary"
+                android:textSize="10.5sp"
+                android:visibility="gone" />
+
+            <!-- Confirm Password (Sign Up only) -->
+            <LinearLayout
+                android:id="@+id/layoutConfirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.04"
+                    android:text="CONFIRM PASSWORD"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="10sp" />
+
+                <EditText
+                    android:id="@+id/etConfirmPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/shape_input_rounded"
+                    android:fontFamily="sans-serif"
+                    android:hint="Confirm Password"
+                    android:inputType="textPassword"
+                    android:paddingHorizontal="14dp"
+                    android:singleLine="true"
+                    android:textColor="@color/input_text"
+                    android:textColorHint="@color/input_hint"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Error message text -->
+            <TextView
+                android:id="@+id/tvErrorMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/status_warning"
+                android:textSize="11.5sp"
+                android:visibility="gone" />
+
+            <!-- Primary Submit Button -->
+            <Button
+                android:id="@+id/btnSubmitAuth"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="18dp"
+                android:backgroundTint="@color/brand_blue"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.03"
+                android:text="Sign In"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="13.5sp"
+                app:cornerRadius="14dp" />
+
+        </LinearLayout>
+
+        <!-- Bottom Switch Link (matching AuthPage.tsx) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvSwitchModePrompt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="Don't have an account? "
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/btnSwitchModeLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:paddingVertical="4dp"
+                android:text="Sign up"
+                android:textColor="@color/brand_blue"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

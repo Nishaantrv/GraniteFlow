@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_card_modern">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="14dp">
+
+            <TextView
+                android:id="@+id/tvCustomerFormTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add New Customer"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnCloseCustomerForm"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/shape_circular_button"
+                android:gravity="center"
+                android:text="✕"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+        <!-- Basic Info -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="COMPANY &amp; CONTACT"
+            android:textColor="@color/brand_blue"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.06"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/etCustCompanyName"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/shape_input_rounded"
+            android:hint="Company Name *"
+            android:paddingHorizontal="12dp"
+            android:textColor="@color/input_text"
+            android:textSize="13sp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/etCustAddress"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@drawable/shape_input_rounded"
+            android:gravity="top|start"
+            android:hint="Full Address"
+            android:padding="12dp"
+            android:textColor="@color/input_text"
+            android:textSize="13sp"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/etCustCountry"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/shape_input_rounded"
+                android:hint="Country (e.g. CHINA)"
+                android:paddingHorizontal="12dp"
+                android:textColor="@color/input_text"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/etCustPhone"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/shape_input_rounded"
+                android:hint="Phone / Mobile"
+                android:paddingHorizontal="12dp"
+                android:textColor="@color/input_text"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/etCustEmail"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/shape_input_rounded"
+            android:hint="Email Address"
+            android:paddingHorizontal="12dp"
+            android:textColor="@color/input_text"
+            android:textSize="13sp"
+            android:layout_marginBottom="14dp" />
+
+        <!-- Export & Shipping Defaults -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SHIPPING &amp; COMMERCIAL DEFAULTS"
+            android:textColor="@color/brand_blue"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.06"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/etCustPortLoading"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/shape_input_rounded"
+                android:hint="Port of Loading"
+                android:paddingHorizontal="12dp"
+                android:textColor="@color/input_text"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/etCustPortDischarge"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/shape_input_rounded"
+                android:hint="Port of Discharge"
+                android:paddingHorizontal="12dp"
+                android:textColor="@color/input_text"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/etCustFinalDest"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/shape_input_rounded"
+                android:hint="Final Destination"
+                android:paddingHorizontal="12dp"
+                android:textColor="@color/input_text"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/etCustHsCode"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/shape_input_rounded"
+                android:hint="HS Code (25161100)"
+                android:paddingHorizontal="12dp"
+                android:textColor="@color/input_text"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <EditText
+                android:id="@+id/etCustTermsDelivery"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/shape_input_rounded"
+                android:hint="Terms (e.g. FOB CHENNAI)"
+                android:paddingHorizontal="12dp"
+                android:textColor="@color/input_text"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/etCustCurrency"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="0.6"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/shape_input_rounded"
+                android:hint="USD / EUR"
+                android:text="USD"
+                android:paddingHorizontal="12dp"
+                android:textColor="@color/input_text"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/btnSaveCustomerForm"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/brand_blue"
+            android:text="SAVE CUSTOMER"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:cornerRadius="14dp" />
+
+    </LinearLayout>
+</ScrollView>

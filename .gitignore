@@ -1,0 +1,33 @@
+# Built binaries & APKs
+*.apk
+*.aab
+*.ap_
+
+# Gradle & Build caches
+.gradle/
+build/
+*/build/
+app/build/
+
+# Local configuration & secrets
+local.properties
+.idea/
+*.iml
+.navigation/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Python Virtual Environments & Caches
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Android Studio / OS files
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak

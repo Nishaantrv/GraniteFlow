@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg"
+    android:orientation="vertical">
+
+    <!-- Top Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp">
+
+        <ImageButton
+            android:id="@+id/btnNewMarkingBack"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:background="@drawable/shape_circular_button"
+            android:contentDescription="Back"
+            android:src="?attr/homeAsUpIndicator"
+            app:tint="@color/text_primary" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
+            android:text="New Marking Session"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/btnNewMarkingAiScan"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:background="@drawable/shape_badge_blue"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:paddingHorizontal="10dp"
+            android:text="✨ AI Slip Scan"
+            android:textColor="@color/brand_blue"
+            android:textSize="10.5sp" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="32dp">
+
+            <!-- 1. AUTO-FILLED CUSTOMER DETAILS FROM DIRECTORY -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.06"
+                android:text="CUSTOMER DETAILS (AUTO-FILLED FROM DIRECTORY)"
+                android:textColor="@color/text_secondary"
+                android:textSize="9.5sp" />
+
+            <LinearLayout
+                android:id="@+id/cardSelectedCustomerSummary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:background="@drawable/shape_card_modern"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/shape_badge_blue"
+                        android:gravity="center"
+                        android:text="🏢"
+                        android:textSize="15sp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvSelectedCustomerName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:hint="Select Buyer / Customer"
+                            android:textColorHint="@color/text_secondary"
+                            android:textColor="@color/text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvSelectedCustomerAddress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="11sp"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/btnChangeCustomerInNewMarking"
+                        android:layout_width="wrap_content"
+                        android:layout_height="28dp"
+                        android:background="@drawable/shape_badge_blue"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:paddingHorizontal="10dp"
+                        android:text="Change"
+                        android:textColor="@color/brand_blue"
+                        android:textSize="10.5sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvSelectedCustomerMeta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/shape_input_rounded"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="6dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="10.5sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- 2. REQUIRED MARKING SESSION INPUTS (Material Name, Starting Block No, Allowance) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.06"
+                android:text="SESSION CONFIGURATION"
+                android:textColor="@color/text_secondary"
+                android:textSize="9.5sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                android:background="@drawable/shape_card_modern"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <!-- Material Name -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="MATERIAL NAME *"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="9sp" />
+
+                <EditText
+                    android:id="@+id/etNmStoneType"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/shape_input_rounded"
+                    android:fontFamily="sans-serif-medium"
+                    android:hint="Enter Material / Stone Name"
+                    android:paddingHorizontal="12dp"
+                    android:singleLine="true"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp" />
+
+                <!-- Block No Starting & Allowance (CM) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="BLOCK NO STARTING *"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="9sp" />
+
+                        <EditText
+                            android:id="@+id/etNmStartBlockNo"
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:layout_marginTop="4dp"
+                            android:background="@drawable/shape_input_rounded"
+                            android:fontFamily="sans-serif-medium"
+                            android:inputType="number"
+                            android:paddingHorizontal="12dp"
+                            android:singleLine="true"
+                            android:text="1"
+                            android:textColor="@color/text_primary"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="ALLOWANCE (CM) *"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="9sp" />
+
+                        <EditText
+                            android:id="@+id/etNmAllowance"
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:layout_marginTop="4dp"
+                            android:background="@drawable/shape_input_rounded"
+                            android:fontFamily="sans-serif-medium"
+                            android:inputType="numberDecimal"
+                            android:paddingHorizontal="12dp"
+                            android:singleLine="true"
+                            android:text="15"
+                            android:textColor="@color/brand_blue"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Hidden Auto-Filled Customer & Logistics Fields (populated from Customer Directory) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/etNmConsignee"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/etNmMarks"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:singleLine="true"
+                    android:text="XOW/XMN" />
+
+                <EditText
+                    android:id="@+id/etNmPricePerCbm"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true"
+                    android:text="700" />
+
+                <EditText
+                    android:id="@+id/etNmCurrency"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:singleLine="true"
+                    android:text="USD" />
+
+                <!-- CALCULATION MODE SELECTOR CARDS -->
+                <LinearLayout
+                    android:id="@+id/cardCalcModeNet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tvCalcModeNetTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✓ Net (Standard)" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/cardCalcModeGross"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tvCalcModeGrossTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Gross (Round Up)" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/cardToggleEndToEnd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/tvEndToEndTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:id="@+id/tvEndToEndStatusBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnToggleAdvancedLogistics"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp" />
+
+                <LinearLayout
+                    android:id="@+id/llAdvancedLogisticsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:id="@+id/etNmAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+                    <EditText
+                        android:id="@+id/etNmPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+                    <EditText
+                        android:id="@+id/etNmBuyer"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+                    <EditText
+                        android:id="@+id/etNmNotifyParty"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+                    <EditText
+                        android:id="@+id/etNmPreCarriage"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:text="ROAD" />
+                    <EditText
+                        android:id="@+id/etNmPlaceReceipt"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:text="QUARRY" />
+                    <EditText
+                        android:id="@+id/etNmPortLoading"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:text="CHENNAI PORT" />
+                    <EditText
+                        android:id="@+id/etNmVessel"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+                    <EditText
+                        android:id="@+id/etNmPortDischarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+                    <EditText
+                        android:id="@+id/etNmFinalDest"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+                    <EditText
+                        android:id="@+id/etNmFinalDestCountry"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:text="CHINA" />
+                    <EditText
+                        android:id="@+id/etNmCountryOrigin"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:text="INDIA" />
+                    <EditText
+                        android:id="@+id/etNmPaymentTerms"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:text="LC AT SIGHT" />
+                    <EditText
+                        android:id="@+id/etNmHsCode"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:text="25161100" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/btnStartMarkingSession"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="@color/brand_blue"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.04"
+                android:text="START MARKING SESSION ›"
+                android:textColor="@color/white"
+                android:textSize="13.5sp"
+                app:cornerRadius="16dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

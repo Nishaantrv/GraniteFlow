@@ -1,0 +1,22 @@
+{
+  "customer": "DAKSHIN EXPORTS",
+  "materialName": "BLACK GALAXY",
+  "blocks": [
+    {
+      "blockNumber": "101",
+      "grossLength": 280,
+      "grossHeight": 140,
+      "grossWidth": 120,
+      "allowance": 10,
+      "netCbm": 3.861
+    },
+    {
+      "blockNumber": "102",
+      "grossLength": 290,
+      "grossHeight": 150,
+      "grossWidth": 130,
+      "allowance": 10,
+      "netCbm": 4.704
+    }
+  ]
+}

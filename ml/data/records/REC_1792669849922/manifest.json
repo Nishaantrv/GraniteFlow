@@ -1,0 +1,15 @@
+{
+  "recordId": "REC_1792669849922",
+  "createdAt": 1792669849937,
+  "customer": "DAKSHIN EXPORTS",
+  "blocksCount": 2,
+  "lossMetrics": {
+    "dimension_mae_cm": 7.5,
+    "volume_mae_cbm": 0.204,
+    "dim_loss_norm": 0.075,
+    "cbm_loss_norm": 0.0408,
+    "ctc_loss": 10.3199,
+    "total_loss": 5.1906
+  },
+  "trainedSamples": 8
+}

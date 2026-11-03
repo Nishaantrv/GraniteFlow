@@ -1,0 +1,27 @@
+{
+  "sourceDocumentId": "REC_1792669849922",
+  "documentType": "QUARRY_MEASUREMENT_SLIP",
+  "customerName": "DAKSHIN EXPORTS",
+  "materialName": "BLACK GALAXY",
+  "locationCode": "ONG-QUARRY-04",
+  "isApproved": true,
+  "approvedAt": 1792669849937,
+  "blocks": [
+    {
+      "blockNumber": "101",
+      "grossLength": 285,
+      "grossHeight": 145,
+      "grossWidth": 125,
+      "allowance": 10,
+      "netCbm": 4.269
+    },
+    {
+      "blockNumber": "102",
+      "grossLength": 290,
+      "grossHeight": 150,
+      "grossWidth": 130,
+      "allowance": 10,
+      "netCbm": 4.704
+    }
+  ]
+}

@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:animateLayoutChanges="true"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="32dp">
+
+        <!-- Top Header: Overview & Date -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvOverviewTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Overview"
+                    android:textColor="@color/text_primary"
+                    android:textSize="21sp" />
+
+                <TextView
+                    android:id="@+id/tvCurrentDateFormatted"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:text="Tuesday, 13 October"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11.5sp"
+                    android:layout_marginTop="1dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btnOverviewThemeToggle"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/shape_circular_button"
+                    android:src="@drawable/ic_theme_mode"
+                    android:padding="8dp"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Switch Dark/Light Theme" />
+
+                <TextView
+                    android:id="@+id/btnOverviewProfile"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:background="@drawable/shape_circular_button"
+                    android:gravity="center"
+                    android:text="👤"
+                    android:textSize="16sp"
+                    android:contentDescription="Profile" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <!-- Metric Tiles: TODAY'S VOL and BLOCKS -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="14dp">
+
+            <!-- TODAY'S VOL -->
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/shape_card_modern"
+                android:padding="12dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="TODAY'S VOL"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="9.5sp"
+                        android:letterSpacing="0.06" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="bottom"
+                        android:layout_marginTop="2dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvTodayVolumeNumber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="0.0"
+                            android:textColor="@color/brand_blue"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text=" m³"
+                            android:textColor="@color/brand_blue"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:text="🧊"
+                    android:textSize="22sp"
+                    android:alpha="0.35" />
+            </FrameLayout>
+
+            <!-- BLOCKS -->
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/shape_card_modern"
+                android:padding="12dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="BLOCKS"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="9.5sp"
+                        android:letterSpacing="0.06" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="bottom"
+                        android:layout_marginTop="2dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvTodayBlocksNumber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="0"
+                            android:textColor="@color/text_primary"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:text=" units"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:text="📦"
+                    android:textSize="22sp"
+                    android:alpha="0.35" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- Customer Directory Card -->
+        <RelativeLayout
+            android:id="@+id/cardCustomerDirectory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_card_modern"
+            android:padding="16dp"
+            android:layout_marginBottom="14dp">
+
+            <TextView
+                android:id="@+id/iconCustDir"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:background="@drawable/shape_badge_blue"
+                android:text="👥"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/iconCustDir"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="14dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CUSTOMER DIRECTORY"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.04" />
+
+                <TextView
+                    android:id="@+id/tvSavedPartnersCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1 saved partner"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="›"
+                android:textColor="@color/text_secondary"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- Active Customer Selection Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_card_modern"
+            android:padding="16dp"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ACTIVE CUSTOMER"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06"
+                android:layout_marginBottom="10dp" />
+
+            <LinearLayout
+                android:id="@+id/layoutActiveCustomerRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/shape_badge_blue"
+                    android:gravity="center"
+                    android:text="👤"
+                    android:textSize="18sp"
+                    android:layout_marginEnd="12dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvActiveCustomerName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No Customer Selected"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvActiveCustomerSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tap search or + below to select a customer"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnClearSelectedCustomer"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/shape_circular_button"
+                    android:gravity="center"
+                    android:text="✕"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Search Customers Dropdown Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvSearchCustomerDropdown"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_search_bubble"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="14dp"
+                    android:text="🔍 Search Customers..."
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/btnQuickAddCustomer"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:minWidth="0dp"
+                    android:padding="0dp"
+                    android:backgroundTint="@color/brand_blue"
+                    android:textColor="@color/white"
+                    android:text="➕"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Sleek Primary START MARKING Button -->
+        <Button
+            android:id="@+id/btnStartMarkingHero"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:backgroundTint="@color/brand_blue"
+            android:fontFamily="sans-serif-medium"
+            android:text="START MARKING  +"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:letterSpacing="0.05"
+            app:cornerRadius="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Active Session Resume Card (Dashboard.tsx replica) -->
+        <LinearLayout
+            android:id="@+id/cardActiveSessionResume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_card_modern"
+            android:padding="16dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginBottom="18dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="● ACTIVE SESSION"
+                android:textColor="@color/brand_blue"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:layout_marginBottom="8dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/iconResumeArrow"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvActiveSessionCustomer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:hint="No Active Session"
+                        android:textColorHint="@color/text_secondary"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvActiveSessionStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2 blocks marked • In Progress"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/iconResumeArrow"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/shape_badge_blue"
+                    android:gravity="center"
+                    android:text="›"
+                    android:textColor="@color/brand_blue"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!-- Volume Trends Bar Chart (Clean Last 7 Days Visualizer) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_card_modern"
+            android:padding="16dp"
+            android:orientation="vertical"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📊 VOLUME TRENDS"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last 7 Days (m³ output)"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Bar Chart Visualization -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="bottom"
+                android:orientation="horizontal">
+
+                <!-- Day 1 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="bottom|center_horizontal"
+                    android:orientation="vertical">
+                    <View android:id="@+id/barDay1" android:layout_width="14dp" android:layout_height="20dp" android:background="@drawable/shape_badge_blue" />
+                    <TextView android:id="@+id/tvDay1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Wed" android:textSize="9sp" android:textColor="@color/text_secondary" android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <!-- Day 2 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="bottom|center_horizontal"
+                    android:orientation="vertical">
+                    <View android:id="@+id/barDay2" android:layout_width="14dp" android:layout_height="40dp" android:background="@drawable/shape_badge_blue" />
+                    <TextView android:id="@+id/tvDay2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thu" android:textSize="9sp" android:textColor="@color/text_secondary" android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <!-- Day 3 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="bottom|center_horizontal"
+                    android:orientation="vertical">
+                    <View android:id="@+id/barDay3" android:layout_width="14dp" android:layout_height="65dp" android:background="@drawable/shape_badge_blue" />
+                    <TextView android:id="@+id/tvDay3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fri" android:textSize="9sp" android:textColor="@color/text_secondary" android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <!-- Day 4 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="bottom|center_horizontal"
+                    android:orientation="vertical">
+                    <View android:id="@+id/barDay4" android:layout_width="14dp" android:layout_height="15dp" android:background="@drawable/shape_badge_blue" />
+                    <TextView android:id="@+id/tvDay4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sat" android:textSize="9sp" android:textColor="@color/text_secondary" android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <!-- Day 5 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="bottom|center_horizontal"
+                    android:orientation="vertical">
+                    <View android:id="@+id/barDay5" android:layout_width="14dp" android:layout_height="80dp" android:background="@drawable/shape_badge_blue" />
+                    <TextView android:id="@+id/tvDay5" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sun" android:textSize="9sp" android:textColor="@color/text_secondary" android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <!-- Day 6 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="bottom|center_horizontal"
+                    android:orientation="vertical">
+                    <View android:id="@+id/barDay6" android:layout_width="14dp" android:layout_height="35dp" android:background="@drawable/shape_badge_blue" />
+                    <TextView android:id="@+id/tvDay6" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mon" android:textSize="9sp" android:textColor="@color/text_secondary" android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <!-- Day 7 (Today) -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="bottom|center_horizontal"
+                    android:orientation="vertical">
+                    <View android:id="@+id/barDay7" android:layout_width="14dp" android:layout_height="50dp" android:background="@drawable/shape_status_pill_active" />
+                    <TextView android:id="@+id/tvDay7" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tue" android:textSize="9sp" android:textColor="@color/brand_blue" android:textStyle="bold" android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- RECENT MARKINGS Section Header -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🕒 RECENT MARKINGS"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06" />
+
+            <TextView
+                android:id="@+id/tvViewAllMarkings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="VIEW ALL"
+                android:textColor="@color/brand_blue"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06" />
+        </RelativeLayout>
+
+        <!-- Recent Inspections RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvRecentMarkings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
